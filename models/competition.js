@@ -7,6 +7,7 @@ const Schema = mongoose.Schema;
 const competitionSchema = new Schema({
     name: { type: String, required: true },
     type: { type: String, required: true },
+    jornadas: { type: String },
     inserted_date: { type: Date, default: Date.now },
     modified_date: { type: Date, default: Date.now }
 });

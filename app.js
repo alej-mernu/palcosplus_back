@@ -9,7 +9,7 @@ const usersRoutes = require('./routes/users-routes');
 const eventsRoutes = require('./routes/events-routes');
 const teamsRoutes = require('./routes/teams-routes');
 const competitionRoutes = require('./routes/competitions-routes');
-const reservationRoutes = require('./routes/user-routes');
+const reservationRoutes = require('./routes/users-routes');
 const userRoutes = require('./routes/reservations-routes');
 const HttpError = require('./models/http-error');
 

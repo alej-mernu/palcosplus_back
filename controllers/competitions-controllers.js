@@ -65,10 +65,10 @@ const createCompetition = async (req, res, next) => {
     );
   }
 
-  const { name, type} = req.body;
+  const { name, type, jornadas} = req.body;
 
   const createdCompetition = new Competition({
-    name, type
+    name, type, jornadas
   });
   console.log(createdCompetition)
 
@@ -93,7 +93,7 @@ const updateCompetition = async (req, res, next) => {
     );
   }
 
-  const { name, type } = req.body;
+  const { name, type, jornadas } = req.body;
   const competitionId = req.params.pid;
 
   let competition;
@@ -109,6 +109,7 @@ const updateCompetition = async (req, res, next) => {
 
   competition.name=name;
   competition.type=type;
+  competition.jornadas=jornadas;
   competition.modified_date=Date.now;
 
   try {
