@@ -1,6 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
+
 require('dotenv/config')
 
 const stadiumsRoutes = require('./routes/stadiums-routes');
@@ -16,8 +19,9 @@ const HttpError = require('./models/http-error');
 const app = express();
 
 app.use(express.json());
+app.use('/public/images', express.static(path.join('public', 'images')));
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -40,6 +44,11 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
+  if (req.file) {
+    fs.unlink(req.file.path, err => {
+      console.log(err);
+    });
+  }
   if (res.headerSent) {
     return next(error);
   }
@@ -48,9 +57,9 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(process.env.DB_CONNECTION,{ useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+  .connect(process.env.DB_CONNECTION, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
   .then(() => {
-      console.log("connected");
+    console.log("connected");
     app.listen(5000);
   })
   .catch(err => {

@@ -2,6 +2,7 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const competitionsControllers = require('../controllers/competitions-controllers');
+const fileUpload = require('../middleware/file-upload');
 
 const router = express.Router();
 
@@ -10,6 +11,7 @@ router.get('/', competitionsControllers.getAllCompetition);
 
 router.post(
   '/',
+  fileUpload.array('images'),
   [
     check('name')
       .not()

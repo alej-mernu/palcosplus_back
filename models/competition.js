@@ -8,6 +8,7 @@ const competitionSchema = new Schema({
     name: { type: String, required: true },
     type: { type: String, required: true },
     jornadas: { type: String },
+    images: { type: Array },
     inserted_date: { type: Date, default: Date.now },
     modified_date: { type: Date, default: Date.now }
 });

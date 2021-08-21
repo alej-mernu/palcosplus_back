@@ -4,7 +4,7 @@ const HttpError = require('../models/http-error');
 const Competition = require('../models/competition');
 
 const getAllCompetition = async (req, res, next) => {
-  
+
   let competition;
   try {
     competition = await Competition.find();
@@ -24,7 +24,7 @@ const getAllCompetition = async (req, res, next) => {
     return next(error);
   }
 
-  
+
   competition.forEach((data, idx) => {
     competition[idx] = data.toObject({ getters: true })
   });
@@ -65,10 +65,14 @@ const createCompetition = async (req, res, next) => {
     );
   }
 
-  const { name, type, jornadas} = req.body;
-
+  const { name, type, jornadas } = req.body;
+  let images = []
+  req.files.map(file => {
+    console.log(file)
+    images.push(file.path)
+  })
   const createdCompetition = new Competition({
-    name, type, jornadas
+    name, type, jornadas, images
   });
   console.log(createdCompetition)
 
@@ -107,10 +111,10 @@ const updateCompetition = async (req, res, next) => {
     return next(error);
   }
 
-  competition.name=name;
-  competition.type=type;
-  competition.jornadas=jornadas;
-  competition.modified_date=Date.now;
+  competition.name = name;
+  competition.type = type;
+  competition.jornadas = jornadas;
+  competition.modified_date = Date.now;
 
   try {
     await competition.save();
