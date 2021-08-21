@@ -33,6 +33,7 @@ app.use('/events', eventsRoutes);
 app.use('/teams', teamsRoutes);
 app.use('/competition', competitionRoutes);
 app.use('/reservation', reservationRoutes);
+app.use('/api/checkout');
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route.', 404);
