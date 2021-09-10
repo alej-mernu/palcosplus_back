@@ -4,7 +4,7 @@ const HttpError = require('../models/http-error');
 const Stadium = require('../models/stadium');
 
 const getAllStadiums = async (req, res, next) => {
-  
+
   let stadium;
   try {
     stadium = await Stadium.find();
@@ -24,7 +24,7 @@ const getAllStadiums = async (req, res, next) => {
     return next(error);
   }
 
-  
+
   stadium.forEach((data, idx) => {
     stadium[idx] = data.toObject({ getters: true })
   });
@@ -33,7 +33,8 @@ const getAllStadiums = async (req, res, next) => {
 };
 
 const getStadiumById = async (req, res, next) => {
-  const stadiumId = req.params.pid;
+  const stadiumId = req.params.id;
+  console.log(req.params.id)
 
   let stadium;
   try {
@@ -65,14 +66,22 @@ const createStadium = async (req, res, next) => {
     );
   }
 
-  const { name, country, city, address, capacity, fundation_date, local_teams, description, location, fundation, zones, access} = req.body;
+  const { name, country, city, capacity, fundation_date, local_teams, description, location, zones, delivery_zone, access } = req.body;
+  let images = []
+  req.files.map(file => {
+    images.push(file.path)
+  })
 
-  const createdStadium = new Place({
-    name, country, city, address, capacity, fundation_date, local_teams, description,location, fundation, zones, access
+  const createdStadium = new Stadium({
+    name, country, city, capacity, fundation_date, local_teams, description, location, zones, delivery_zone, access, images
   });
 
   try {
-    await createdStadium.save();
+    const res = await createdStadium.save(function (err, data) {
+      if (err) {
+        console.log(err);
+      }
+    });
   } catch (err) {
     const error = new HttpError(
       'Creating stadium failed, please try again.',
@@ -106,19 +115,19 @@ const updateStadium = async (req, res, next) => {
     return next(error);
   }
 
-  stadium.name=name;
-  stadium.country=country;
-  stadium.city=city;
-  stadium.address=address;
-  stadium.capacity=capacity;
-  stadium.fundation_date=fundation_date;
-  stadium,local_teams=local_teams;
-  stadium.description=description;
-  stadium.location=location
-  stadium.fundation=fundation;
-  stadium.zones=zones;
-  stadium.access=access;
-  stadium.modified_date=Date.now;
+  stadium.name = name;
+  stadium.country = country;
+  stadium.city = city;
+  stadium.address = address;
+  stadium.capacity = capacity;
+  stadium.fundation_date = fundation_date;
+  stadium, local_teams = local_teams;
+  stadium.description = description;
+  stadium.location = location
+  stadium.fundation = fundation;
+  stadium.zones = zones;
+  stadium.access = access;
+  stadium.modified_date = Date.now;
 
   try {
     await stadium.save();

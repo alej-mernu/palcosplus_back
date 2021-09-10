@@ -12,8 +12,7 @@ const usersRoutes = require('./routes/users-routes');
 const eventsRoutes = require('./routes/events-routes');
 const teamsRoutes = require('./routes/teams-routes');
 const competitionRoutes = require('./routes/competitions-routes');
-const reservationRoutes = require('./routes/users-routes');
-const userRoutes = require('./routes/reservations-routes');
+const reservationRoutes = require('./routes/reservations-routes');
 const HttpError = require('./models/http-error');
 
 const app = express();
@@ -29,10 +28,9 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use('/user', userRoutes);
+app.use('/user', usersRoutes);
 app.use('/stadiums', stadiumsRoutes);
 app.use('/palcos', palcosRoutes);
-app.use('/users', usersRoutes);
 app.use('/events', eventsRoutes);
 app.use('/teams', teamsRoutes);
 app.use('/competition', competitionRoutes);

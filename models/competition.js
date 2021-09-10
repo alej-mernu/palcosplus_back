@@ -10,7 +10,7 @@ const competitionSchema = new Schema({
     jornadas: { type: String },
     images: { type: Array },
     inserted_date: { type: Date, default: Date.now },
-    modified_date: { type: Date, default: Date.now }
+    modified_date: { type: Date }
 });
 
 competitionSchema.plugin(uniqueValidator);

@@ -2,14 +2,16 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const stadiumsControllers = require('../controllers/stadiums-controllers');
+const fileUpload = require('../middleware/file-upload');
 
 const router = express.Router();
 
 router.get('/', stadiumsControllers.getAllStadiums);
-router.get('/:pid', stadiumsControllers.getStadiumById);
+router.get('/:id', stadiumsControllers.getStadiumById);
 
 router.post(
   '/',
+  fileUpload.array('images'),
   [
     check('name')
       .not()
@@ -18,9 +20,6 @@ router.post(
       .not()
       .isEmpty(),
     check('city')
-      .not()
-      .isEmpty(),
-    check('address')
       .not()
       .isEmpty(),
     check('capacity')
@@ -36,9 +35,6 @@ router.post(
       .not()
       .isEmpty(),
     check('location')
-      .not()
-      .isEmpty(),
-    check('fundation')
       .not()
       .isEmpty(),
     check('zones')

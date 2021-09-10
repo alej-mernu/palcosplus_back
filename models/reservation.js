@@ -12,7 +12,7 @@ const reservationSchema = new Schema({
     palco_id: { type: String, required: true },
     user_id: { type: String, required: true },
     inserted_date: { type: Date, default: Date.now },
-    modified_date: { type: Date, default: Date.now }
+    modified_date: { type: Date }
 });
 
 reservationSchema.plugin(uniqueValidator);

@@ -3,8 +3,37 @@ const { validationResult } = require('express-validator');
 const HttpError = require('../models/http-error');
 const Palco = require('../models/palcos');
 
+const getAllPalcos = async (req, res, next) => {
+
+  let palcos;
+  try {
+    palcos = await Palco.find();
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not find the palcos.',
+      500
+    );
+    return next(error);
+  }
+
+  if (!palcos) {
+    const error = new HttpError(
+      'Does not exist the palcos',
+      404
+    );
+    return next(error);
+  }
+
+
+  palcos.forEach((data, idx) => {
+    palcos[idx] = data.toObject({ getters: true })
+  });
+
+  res.json({ palcos: palcos });
+};
+
 const getPalcoById = async (req, res, next) => {
-  const palcoId = req.params.pid;
+  const palcoId = req.params.id;
 
   let palco;
   try {
@@ -29,11 +58,11 @@ const getPalcoById = async (req, res, next) => {
 };
 
 const getPalcoByStadiumId = async (req, res, next) => {
-  const stadiumId = req.params.uid;
+  const stadiumId = req.params.id;
 
   let palcos;
   try {
-    palcos = await Palco.find({ stadium_id: stadiumId });
+    palcos = await Palco.find({ stadiumId });
   } catch (err) {
     const error = new HttpError(
       'Fetching palcos failed, please try again later',
@@ -59,14 +88,22 @@ const createPalco = async (req, res, next) => {
     );
   }
 
-  const { name, level, zone, num_cards, description, price, active, stadium_id, user_id, access, comision} = req.body;
+  const { name, type, zone, access, num_cards, description, price, stadium_id, comision, active, user_id, } = req.body;
+  let images = []
+  req.files.map(file => {
+    images.push(file.path)
+  })
 
   const createdPalco = new Palco({
-    name, level, zone, num_cards, description, price, active, stadium_id, user_id, access, comision
+    name, type, zone, access, num_cards, description, price, stadium_id, comision, active: true, user_id, images
   });
 
   try {
-    await createdPalco.save();
+    await createdPalco.save(function (err, data) {
+      if (err) {
+        console.log(err);
+      }
+    });
   } catch (err) {
     const error = new HttpError(
       'Creating palco failed, please try again.',
@@ -100,18 +137,18 @@ const updatePalco = async (req, res, next) => {
     return next(error);
   }
 
-  palco.name=name;
-  palco.level=level;
-  palco.zone=zone;
-  palco.num_cards=num_cards;
-  palco.description=description;
-  palco.price=price;
-  palco,active=active;
-  palco.stadium_id=stadium_id;
-  palco.user_id=user_id;
-  palco.comision=comision;
-  palco.access=access;
-  palco.modified_date=Date.now;
+  palco.name = name;
+  palco.level = level;
+  palco.zone = zone;
+  palco.num_cards = num_cards;
+  palco.description = description;
+  palco.price = price;
+  palco, active = active;
+  palco.stadium_id = stadium_id;
+  palco.user_id = user_id;
+  palco.comision = comision;
+  palco.access = access;
+  palco.modified_date = Date.now;
 
   try {
     await palco.save();
@@ -153,6 +190,7 @@ const deletePalco = async (req, res, next) => {
   res.status(200).json({ message: 'Deleted palco.' });
 };
 
+exports.getAllPalcos = getAllPalcos;
 exports.getPalcoById = getPalcoById;
 exports.getPalcoByStadiumId = getPalcoByStadiumId;
 exports.createPalco = createPalco;

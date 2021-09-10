@@ -10,8 +10,9 @@ const teamSchema = new Schema({
     stadium_id: { type: String, required: true },
     principal_color: { type: String, required: true },
     secundary_color: { type: String, required: true },
+    images: { type: Array },
     inserted_date: { type: Date, default: Date.now },
-    modified_date: { type: Date, default: Date.now }
+    modified_date: { type: Date }
 });
 
 teamSchema.plugin(uniqueValidator);

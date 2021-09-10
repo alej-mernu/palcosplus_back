@@ -5,19 +5,20 @@ const Schema = mongoose.Schema;
 
 
 const palcoSchema = new Schema({
-    name: { type: String, required: true },
-    level: { type: String, required: true },
-    zone: { type: String, required: true },
-    num_cards: { type: Number, required: true },
-    description: { type: String, required: true },
-    price: { type: Number },
-    active: { type: Boolean, required: true },
+    name: { type: String },
+    type: { type: String },
+    zone: { type: String },
+    access: { type: String },
+    num_cards: { type: Number },
+    description: { type: String },
+    price: { type: String },
     stadium_id: { type: String },
-    user_id: { type: String, required: true },
-    access: { type: String, required: true },
-    comision: { type: Number, required: true },
+    comision: { type: String },
+    active: { type: Boolean },
+    user_id: { type: String },
+    images: { type: Array },
     inserted_date: { type: Date, default: Date.now },
-    modified_date: { type: Date, default: Date.now }
+    modified_date: { type: Date }
 });
 
 palcoSchema.plugin(uniqueValidator);

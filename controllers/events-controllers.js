@@ -3,8 +3,37 @@ const { validationResult } = require('express-validator');
 const HttpError = require('../models/http-error');
 const Events = require('../models/events');
 
+const getAllEvents = async (req, res, next) => {
+
+  let events;
+  try {
+    events = await Events.find();
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not find a event.',
+      500
+    );
+    return next(error);
+  }
+
+  if (!events) {
+    const error = new HttpError(
+      'Does not exist events',
+      404
+    );
+    return next(error);
+  }
+
+
+  events.forEach((data, idx) => {
+    events[idx] = data.toObject({ getters: true })
+  });
+
+  res.json({ events: events });
+};
+
 const getEventById = async (req, res, next) => {
-  const eventId = req.params.pid;
+  const eventId = req.params.id;
 
   let event;
   try {
@@ -59,14 +88,22 @@ const createEvent = async (req, res, next) => {
     );
   }
 
-  const { places, disponibility, type, home, visitor, name, tour_name, date, time, jornada, competition_id, stadium_id } = req.body;
+  const { type, home, visitor, name, tour_name, event_color, date, time, jornada, competition_id, stadium_id, isImportant } = req.body;
+  let images = []
+  req.files.map(file => {
+    images.push(file.path)
+  })
 
-  const createdEvent = new Palco({
-    places, disponibility, type, home, visitor, name, tour_name, date, time, jornada, competition_id, stadium_id
+  const createdEvent = new Events({
+    type, home, visitor, name, tour_name, event_color, date, time, jornada, competition_id, stadium_id, images, isImportant
   });
 
   try {
-    await createdEvent.save();
+    await createdEvent.save(function (err, data) {
+      if (err) {
+        console.log(err);
+      }
+    });
   } catch (err) {
     const error = new HttpError(
       'Creating event failed, please try again.',
@@ -86,7 +123,7 @@ const updateEvent = async (req, res, next) => {
     );
   }
 
-  const { places, disponibility, type, home, visitor, name, tour_name, date, time, jornada, competition_id, stadium_id } = req.body;
+  const { places, disponibility, type, home, visitor, name, tour_name, date, time, jornada, competition_id, stadium_id, isImportant } = req.body;
   const eventId = req.params.pid;
 
   let event;
@@ -112,6 +149,7 @@ const updateEvent = async (req, res, next) => {
   event.jornada = jornada;
   event.competition_id = competition_id;
   event.stadium_id = stadium_id;
+  event.isImportant = isImportant;
   event.modified_date = Date.now;
 
   try {
@@ -154,6 +192,7 @@ const deleteEvent = async (req, res, next) => {
   res.status(200).json({ message: 'Deleted event.' });
 };
 
+exports.getAllEvents = getAllEvents;
 exports.getEventById = getEventById;
 exports.getEventByStadiumId = getEventByStadiumId;
 exports.createEvent = createEvent;

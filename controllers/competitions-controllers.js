@@ -68,13 +68,11 @@ const createCompetition = async (req, res, next) => {
   const { name, type, jornadas } = req.body;
   let images = []
   req.files.map(file => {
-    console.log(file)
     images.push(file.path)
   })
   const createdCompetition = new Competition({
     name, type, jornadas, images
   });
-  console.log(createdCompetition)
 
   try {
     await createdCompetition.save();

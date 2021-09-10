@@ -6,15 +6,25 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
     name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true, minlength: 6 },
-    image: { type: String, required: true },
-    address: { type: String, required: true },
-    tel: { type: Number, required: true },
-    date_birth: { type: String, required: true },
-    role: { type: String, required: true },
+    last_name: { type: String },
+    email: { type: String, unique: true },
+    tel: { type: Number },
+    date_birth: { type: String },
+    password: { type: String },
+    image: { type: String },
+    role: { type: String },
+    origin: { type: String },
+    //address
+    alias: { type: String },
+    country: { type: String },
+    state: { type: String },
+    city: { type: String },
+    suburb: { type: String },
+    postal_code: { type: String },
+    address: { type: String },
+    interior_num: { type: String },
     inserted_date: { type: Date, default: Date.now },
-    modified_date: { type: Date, default: Date.now }
+    modified_date: { type: Date }
 });
 
 userSchema.plugin(uniqueValidator);

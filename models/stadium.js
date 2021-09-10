@@ -8,17 +8,18 @@ const stadiumSchema = new Schema({
     name: { type: String, required: true },
     country: { type: String, required: true },
     city: { type: String, required: true },
-    address: { type: String, required: true },
     capacity: { type: Number, required: true },
     fundation_date: { type: String },
-    local_teams: { type: String, required: true },
+    local_teams: { type: String },
     description: { type: String },
     location: { type: String },
-    fundation: { type: String },
     zones: { type: String },
+    delivery_zone: { type: String },
     access: { type: String },
+    /*tarifas: { type: Array },*/
+    images: { type: Array },
     inserted_date: { type: Date, default: Date.now },
-    modified_date: { type: Date, default: Date.now }
+    modified_date: { type: Date }
 });
 
 stadiumSchema.plugin(uniqueValidator);

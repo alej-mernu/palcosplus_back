@@ -3,6 +3,35 @@ const { validationResult } = require('express-validator');
 const HttpError = require('../models/http-error');
 const Team = require('../models/teams');
 
+const getAllTeams = async (req, res, next) => {
+
+  let teams;
+  try {
+    teams = await Team.find();
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not find the teams.',
+      500
+    );
+    return next(error);
+  }
+
+  if (!teams) {
+    const error = new HttpError(
+      'Does not exist the teams',
+      404
+    );
+    return next(error);
+  }
+
+
+  teams.forEach((data, idx) => {
+    teams[idx] = data.toObject({ getters: true })
+  });
+
+  res.json({ teams: teams });
+};
+
 const getTeamById = async (req, res, next) => {
   const teamId = req.params.pid;
 
@@ -29,7 +58,7 @@ const getTeamById = async (req, res, next) => {
 };
 
 const getTeamByStadiumId = async (req, res, next) => {
-  const stadiumId = req.params.uid;
+  const stadiumId = req.params.pid;
 
   let teams;
   try {
@@ -59,23 +88,31 @@ const createTeam = async (req, res, next) => {
     );
   }
 
-  const { name, country, stadium_id, principal_color, secundary_color} = req.body;
+  const { name, country, stadium_id, principal_color, secundary_color } = req.body;
+  let images = []
+  req.files.map(file => {
+    images.push(file.path)
+  })
 
-  const createdTeam = new Palco({
-    name, country, stadium_id, principal_color, secundary_color
+  const createdTeam = new Team({
+    name, country, stadium_id, principal_color, secundary_color, images
   });
 
   try {
-    await createdTeam.save();
+    await createdTeam.save(function (err, data) {
+      if (err) {
+        console.log(err);
+      }
+    });
   } catch (err) {
     const error = new HttpError(
-      'Creating palco failed, please try again.',
+      'Creating team failed, please try again.',
       500
     );
     return next(error);
   }
 
-  res.status(201).json({ palco: createdTeam });
+  res.status(201).json({ team: createdTeam });
 };
 
 const updateTeam = async (req, res, next) => {
@@ -100,12 +137,12 @@ const updateTeam = async (req, res, next) => {
     return next(error);
   }
 
-  team.name=name;
-  team.country=country;
-  team.stadium_id=stadium_id;
-  team.principal_color=principal_color;
-  team.secundary_color=secundary_color;
-  palco.modified_date=Date.now;
+  team.name = name;
+  team.country = country;
+  team.stadium_id = stadium_id;
+  team.principal_color = principal_color;
+  team.secundary_color = secundary_color;
+  palco.modified_date = Date.now;
 
   try {
     await palco.save();
@@ -147,6 +184,7 @@ const deleteTeam = async (req, res, next) => {
   res.status(200).json({ message: 'Deleted palco.' });
 };
 
+exports.getAllTeams = getAllTeams;
 exports.getTeamById = getTeamById;
 exports.getTeamByStadiumId = getTeamByStadiumId;
 exports.createTeam = createTeam;
