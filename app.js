@@ -13,6 +13,8 @@ const eventsRoutes = require('./routes/events-routes');
 const teamsRoutes = require('./routes/teams-routes');
 const competitionRoutes = require('./routes/competitions-routes');
 const reservationRoutes = require('./routes/reservations-routes');
+const paymentRoutes = require('./routes/payments-routes');
+const tarifasRoutes = require('./routes/tarifas-routes');
 const HttpError = require('./models/http-error');
 
 const app = express();
@@ -35,6 +37,8 @@ app.use('/events', eventsRoutes);
 app.use('/teams', teamsRoutes);
 app.use('/competition', competitionRoutes);
 app.use('/reservation', reservationRoutes);
+app.use('/pay', paymentRoutes);
+app.use('/tarifas', tarifasRoutes);
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route.', 404);

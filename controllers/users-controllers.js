@@ -48,15 +48,13 @@ const getUserById = async (req, res, next) => {
 };
 
 const signup = async (req, res, next) => {
-  console.log(1)
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log(errors)
     return next(
       new HttpError('Invalid inputs passed, please check your data.', 422)
     );
   }
-
-  console.log(2)
 
   const { name, last_name, email, tel, date_birth, password, role, origin, alias, country, state, city, suburb, postal_code, address, interior_num } = req.body;
 
@@ -75,6 +73,7 @@ const signup = async (req, res, next) => {
       'Signing up failed, please try again later.',
       500
     );
+    console.log(error);
     return next(error);
   }
 
@@ -83,6 +82,7 @@ const signup = async (req, res, next) => {
       'User exists already, please login instead.',
       422
     );
+    console.log(error);
     return next(error);
   }
 
@@ -94,6 +94,7 @@ const signup = async (req, res, next) => {
       'Could not create user, please try again.',
       422
     );
+    console.log(error);
     return next(error);
   }
 
@@ -109,6 +110,7 @@ const signup = async (req, res, next) => {
       'Signing up failed, please try again.',
       500
     );
+    console.log(error);
     return next(error);
   }
 
@@ -120,6 +122,7 @@ const signup = async (req, res, next) => {
       'Signing up failed, please try again.',
       500
     );
+    console.log(error);
     return next(error);
   }
 
@@ -138,6 +141,7 @@ const login = async (req, res, next) => {
       'Logging in failed, please try again later.',
       500
     );
+    console.log(error);
     return next(error);
   }
 
@@ -146,6 +150,7 @@ const login = async (req, res, next) => {
       'Invalid credentials, could not log you in.',
       401
     );
+    console.log(error);
     return next(error);
   }
 
@@ -157,6 +162,7 @@ const login = async (req, res, next) => {
       'Invalid credentials, could not log you in. Please check your credentials',
       401
     );
+    console.log(error);
     return next(error);
   }
 
@@ -165,6 +171,7 @@ const login = async (req, res, next) => {
       'Invalid pasword, could not log you in.',
       401
     );
+    console.log(error);
     return next(error);
   }
 
@@ -176,6 +183,7 @@ const login = async (req, res, next) => {
       'Signing up failed, please try again.',
       500
     );
+    console.log(error);
     return next(error);
   }
 
