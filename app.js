@@ -58,11 +58,12 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || 'An unknown error occurred!' });
 });
 
+const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 5000;
 mongoose
-  .connect(process.env.DB_CONNECTION, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+  .connect("mongodb+srv://palcosplus:Palcosplus.10@cluster0.bsm72.mongodb.net/PalcosPlusDataBase?retryWrites=true&w=majority", { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
   .then(() => {
-    console.log("connected");
-    app.listen(5000);
+    console.log("server listening port " + port);
+    app.listen(port);
   })
   .catch(err => {
     console.log(err);
