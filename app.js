@@ -63,7 +63,7 @@ mongoose
   .connect("mongodb+srv://palcosplus:Palcosplus.10@cluster0.bsm72.mongodb.net/PalcosPlusDataBase?retryWrites=true&w=majority", { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
   .then(() => {
     console.log("server listening port " + port);
-    app.listen(port);
+    app.listen(5000);
   })
   .catch(err => {
     console.log(err);
