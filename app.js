@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
-
+console.log("entra")
 require('dotenv/config')
 
 const stadiumsRoutes = require('./routes/stadiums-routes');
@@ -59,11 +59,13 @@ app.use((error, req, res, next) => {
 });
 
 const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 5000;
+console.log(port)
 mongoose
   .connect("mongodb+srv://palcosplus:Palcosplus.10@cluster0.bsm72.mongodb.net/PalcosPlusDataBase?retryWrites=true&w=majority", { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
   .then(() => {
-    console.log("server listening port " + port);
-    app.listen(5000);
+    app.listen(5000, function () {
+      console.log("server listening port " + 5000);
+    });
   })
   .catch(err => {
     console.log(err);
