@@ -30,6 +30,12 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.get('/', (req, res) => {
+
+  res.send('hello from simple server :)')
+
+})
+
 app.use('/user', usersRoutes);
 app.use('/stadiums', stadiumsRoutes);
 app.use('/palcos', palcosRoutes);
