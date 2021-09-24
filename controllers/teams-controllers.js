@@ -90,9 +90,11 @@ const createTeam = async (req, res, next) => {
 
   const { name, country, stadium_id, principal_color, secundary_color } = req.body;
   let images = []
-  req.files.map(file => {
-    images.push(file.path)
-  })
+  if(req.files){
+    req.files.map(file => {
+      images.push(file.path)
+    })
+  }
 
   const createdTeam = new Team({
     name, country, stadium_id, principal_color, secundary_color, images

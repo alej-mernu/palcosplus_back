@@ -67,9 +67,11 @@ const createCompetition = async (req, res, next) => {
 
   const { name, type, jornadas } = req.body;
   let images = []
-  req.files.map(file => {
-    images.push(file.path)
-  })
+  if(req.files){
+    req.files.map(file => {
+      images.push(file.path)
+    })
+  }
   const createdCompetition = new Competition({
     name, type, jornadas, images
   });

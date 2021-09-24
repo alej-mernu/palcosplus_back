@@ -68,9 +68,11 @@ const createStadium = async (req, res, next) => {
 
   const { name, country, city, capacity, fundation_date, local_teams, description, location, zones, delivery_zone, access } = req.body;
   let images = []
-  req.files.map(file => {
-    images.push(file.path)
-  })
+  if(req.files){
+    req.files.map(file => {
+      images.push(file.path)
+    })
+  }
 
   const createdStadium = new Stadium({
     name, country, city, capacity, fundation_date, local_teams, description, location, zones, delivery_zone, access, images

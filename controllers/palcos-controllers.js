@@ -88,14 +88,16 @@ const createPalco = async (req, res, next) => {
     );
   }
 
-  const { name, type, zone, access, num_cards, description, price, stadium_id, comision, active, user_id, } = req.body;
+  const { name, type, zone, access, num_cards, description, price, owner_price, stadium_id, comision, user_id, } = req.body;
   let images = []
-  req.files.map(file => {
-    images.push(file.path)
-  })
+  if(req.files){
+    req.files.map(file => {
+      images.push(file.path)
+    })
+  }
 
   const createdPalco = new Palco({
-    name, type, zone, access, num_cards, description, price, stadium_id, comision, active: true, user_id, images
+    name, type, zone, access, num_cards, description, price, owner_price, stadium_id, comision, active: true, user_id, images
   });
 
   try {
