@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
-
 require('dotenv/config')
 
 const stadiumsRoutes = require('./routes/stadiums-routes');
@@ -58,12 +57,13 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || 'An unknown error occurred!' });
 });
 
-const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 5000;
+const port = (process.env.port || 5000);
 mongoose
   .connect("mongodb+srv://palcosplus:Palcosplus.10@cluster0.bsm72.mongodb.net/PalcosPlusDataBase?retryWrites=true&w=majority", { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
   .then(() => {
-    console.log("server listening port " + port);
-    app.listen(port);
+    app.listen(port, function () {
+      console.log("server listening port " + port);
+    });
   })
   .catch(err => {
     console.log(err);
