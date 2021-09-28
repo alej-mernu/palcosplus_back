@@ -34,8 +34,6 @@ const getUserById = async (req, res, next) => {
     return next(error);
   }
 
-  console.log(user)
-
   if (!user) {
     const error = new HttpError(
       'Could not find a user for the provided id.',

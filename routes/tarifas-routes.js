@@ -6,7 +6,7 @@ const tarifasControllers = require('../controllers/traifas-controllers');
 const router = express.Router();
 
 router.get('/', tarifasControllers.getAllTarifas);
-router.get('/stadium/:pid', tarifasControllers.getTarifaByStadiumId);
+router.get('/:zip', tarifasControllers.getTarifaByPostalCode);
 
 router.post('/', tarifasControllers.createTarifa
 );

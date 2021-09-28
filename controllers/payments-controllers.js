@@ -70,10 +70,12 @@ const paymentCheckout = async (req, res) => {
         const { number, exp_month, exp_year, cvc, amount, description } = req.body
 
         const card = await paymentMethod(number, exp_month, exp_year, cvc);
+        console.log(card)
 
+        const totalAmount = amount * 100;
 
         const payment = await stripe.paymentIntents.create({
-            amount: amount,
+            amount: totalAmount,
             currency: 'mxn',
             description: description,
             payment_method: card,
