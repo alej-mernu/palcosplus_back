@@ -13,7 +13,6 @@ const fileUpload = multer({
       cb(null, 'public/images');
     },
     filename: (req, file, cb) => {
-      console.log(file)
       const fileName = file.originalname;
       cb(null, fileName);
     }

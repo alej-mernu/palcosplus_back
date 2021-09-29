@@ -14,6 +14,7 @@ const competitionRoutes = require('./routes/competitions-routes');
 const reservationRoutes = require('./routes/reservations-routes');
 const paymentRoutes = require('./routes/payments-routes');
 const tarifasRoutes = require('./routes/tarifas-routes');
+const rentsRoutes = require('./routes/rents-routes');
 const HttpError = require('./models/http-error');
 
 const app = express();
@@ -23,7 +24,7 @@ app.use('/public/images', express.static(path.join('public', 'images')));
 
 app.use(function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Credentials', true);
   next();
@@ -38,6 +39,7 @@ app.use('/competition', competitionRoutes);
 app.use('/reservation', reservationRoutes);
 app.use('/pay', paymentRoutes);
 app.use('/tarifas', tarifasRoutes);
+app.use('/rents', rentsRoutes);
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route.', 404);

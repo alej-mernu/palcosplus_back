@@ -34,7 +34,6 @@ const getAllStadiums = async (req, res, next) => {
 
 const getStadiumById = async (req, res, next) => {
   const stadiumId = req.params.id;
-  console.log(req.params.id)
 
   let stadium;
   try {

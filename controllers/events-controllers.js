@@ -91,7 +91,6 @@ const createEvent = async (req, res, next) => {
   const { type, home, visitor, name, tour_name, event_color, date, time, jornada, competition_id, stadium_id, isImportant } = req.body;
   let images = []
   if(req.files){
-    console.log("yes")
     req.files.map(file => {
       images.push(file.path)
     })

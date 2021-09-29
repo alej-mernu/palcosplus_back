@@ -54,6 +54,29 @@ const getTarifaByPostalCode = async (req, res, next) => {
     res.json({ tarifas: tarifas.map(tarifa => tarifa.toObject({ getters: true })) });
 };
 
+const getTarifaByStadiumId = async (req, res, next) => {
+    const stadiumId = req.params.id;
+  
+    let tarifas;
+    try {
+      tarifas = await Tarifas.find({ stadium_id: stadiumId });
+    } catch (err) {
+      const error = new HttpError(
+        'Fetching tarifas failed, please try again later',
+        500
+      );
+      return next(error);
+    }
+  
+    if (!tarifas || tarifas.length === 0) {
+      return next(
+        new HttpError('Could not find tarifas for the provided stadium id.', 404)
+      );
+    }
+  
+    res.json({ tarifas: tarifas.map(tarifa => tarifa.toObject({ getters: true })) });
+  };
+
 const createTarifa = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -87,4 +110,5 @@ const createTarifa = async (req, res, next) => {
 
 exports.getAllTarifas = getAllTarifas;
 exports.getTarifaByPostalCode = getTarifaByPostalCode;
+exports.getTarifaByStadiumId = getTarifaByStadiumId;
 exports.createTarifa = createTarifa;

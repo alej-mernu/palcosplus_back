@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.get('/', tarifasControllers.getAllTarifas);
 router.get('/:zip', tarifasControllers.getTarifaByPostalCode);
+router.get('/stadium/:id', tarifasControllers.getTarifaByStadiumId);
 
 router.post('/', tarifasControllers.createTarifa
 );

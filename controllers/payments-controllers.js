@@ -70,7 +70,6 @@ const paymentCheckout = async (req, res) => {
         const { number, exp_month, exp_year, cvc, amount, description } = req.body
 
         const card = await paymentMethod(number, exp_month, exp_year, cvc);
-        console.log(card)
 
         const totalAmount = amount * 100;
 
@@ -81,12 +80,11 @@ const paymentCheckout = async (req, res) => {
             payment_method: card,
             confirm: true,
         })
-        res.send(payment.id)
+        res.status(200).send(payment.id)
     } catch (error) {
         const e = ErrorCatcher(error.raw)
-        console.log(error.raw);
         console.log(error);
-        e.id !== 500 ? res.json(e.msg) : res.json(error.raw.message)
+        e.id !== 500 ? res.status(e.id).send(e.msg) : res.status(500).send(error.raw.message)
     }
 }
 
