@@ -34,7 +34,6 @@ const getAllTarifas = async (req, res, next) => {
 
 const getTarifaByPostalCode = async (req, res, next) => {
     const postal_code = req.params.zip;
-    console.log(postal_code)
 
     let tarifas;
     try {
@@ -121,8 +120,6 @@ const deleteTarifaByStadiumId = async (req, res, next) => {
       );
       return next(error);
     }
-
-    console.log(tarifa)
   
     try {
       await tarifa.remove();
