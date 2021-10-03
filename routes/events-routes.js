@@ -9,6 +9,7 @@ const router = express.Router();
 router.get('/', eventsControllers.getAllEvents);
 router.get('/:id', eventsControllers.getEventById);
 router.get('/stadium/:pid', eventsControllers.getEventByStadiumId);
+router.get('/principal/:pid', eventsControllers.getPrincipalEvents);
 
 router.post(
   '/',
@@ -27,28 +28,7 @@ router.post(
 router.patch(
   '/:pid',
   [
-    check('name')
-      .not()
-      .isEmpty(),
-    check('places')
-      .not()
-      .isEmpty(),
-    check('disponibility')
-      .not()
-      .isEmpty(),
-    check('type')
-      .not()
-      .isEmpty(),
     check('date')
-      .not()
-      .isEmpty(),
-    check('time')
-      .not()
-      .isEmpty(),
-    check('jornada')
-      .not()
-      .isEmpty(),
-    check('competition')
       .not()
       .isEmpty(),
     check('stadium_id')

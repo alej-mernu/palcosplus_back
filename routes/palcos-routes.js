@@ -27,36 +27,6 @@ router.patch(
     check('name')
       .not()
       .isEmpty(),
-    check('level')
-      .not()
-      .isEmpty(),
-    check('zone')
-      .not()
-      .isEmpty(),
-    check('num_cards')
-      .not()
-      .isEmpty(),
-    check('description')
-      .not()
-      .isEmpty(),
-    check('price')
-      .not()
-      .isEmpty(),
-    check('active')
-      .not()
-      .isEmpty(),
-    check('stadium_id')
-      .not()
-      .isEmpty(),
-    check('user_id')
-      .not()
-      .isEmpty(),
-    check('access')
-      .not()
-      .isEmpty(),
-    check('comision')
-      .not()
-      .isEmpty()
   ],
   palcosControllers.updatePalco
 );

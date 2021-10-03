@@ -12,4 +12,7 @@ router.get('/stadium/:id', tarifasControllers.getTarifaByStadiumId);
 router.post('/', tarifasControllers.createTarifa
 );
 
+router.delete('/:id', tarifasControllers.deleteTarifaByStadiumId);
+
+
 module.exports = router;

@@ -22,5 +22,6 @@ router.post(
 );
 
 router.post('/login', usersController.login);
+router.patch('/update',fileUpload.single('image'), usersController.updateUser);
 
 module.exports = router;

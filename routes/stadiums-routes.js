@@ -49,44 +49,6 @@ router.post(
 
 router.patch(
   '/:pid',
-  [
-    check('name')
-      .not()
-      .isEmpty(),
-    check('country')
-      .not()
-      .isEmpty(),
-    check('city')
-      .not()
-      .isEmpty(),
-    check('address')
-      .not()
-      .isEmpty(),
-    check('capacity')
-      .not()
-      .isEmpty(),
-    check('fundation_date')
-      .not()
-      .isEmpty(),
-    check('local_teams')
-      .not()
-      .isEmpty(),
-    check('description')
-      .not()
-      .isEmpty(),
-    check('location')
-      .not()
-      .isEmpty(),
-    check('fundation')
-      .not()
-      .isEmpty(),
-    check('zones')
-      .not()
-      .isEmpty(),
-    check('access')
-      .not()
-      .isEmpty()
-  ],
   stadiumsControllers.updateStadium
 );
 

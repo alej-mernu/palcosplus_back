@@ -66,6 +66,7 @@ const createStadium = async (req, res, next) => {
   }
 
   const { name, country, city, capacity, fundation_date, local_teams, description, location, zones, delivery_zone, access } = req.body;
+  
   let images = []
   if(req.files){
     req.files.map(file => {
@@ -102,7 +103,7 @@ const updateStadium = async (req, res, next) => {
     );
   }
 
-  const { name, country, city, address, capacity, fundation_date, local_teams, description, location, fundation, zones, access } = req.body;
+  const { name, country, city, capacity, fundation_date, local_teams, description, location, zones, delivery_zone, access } = req.body;
   const stadiumId = req.params.pid;
 
   let stadium;
@@ -116,23 +117,25 @@ const updateStadium = async (req, res, next) => {
     return next(error);
   }
 
-  stadium.name = name;
-  stadium.country = country;
-  stadium.city = city;
-  stadium.address = address;
-  stadium.capacity = capacity;
-  stadium.fundation_date = fundation_date;
-  stadium, local_teams = local_teams;
-  stadium.description = description;
-  stadium.location = location
-  stadium.fundation = fundation;
-  stadium.zones = zones;
-  stadium.access = access;
-  stadium.modified_date = Date.now;
+  if(stadium){
+    stadium.name = name;
+    stadium.country = country;
+    stadium.city = city;
+    stadium.capacity = capacity;
+    stadium.fundation_date = fundation_date;
+    stadium.local_teams = local_teams;
+    stadium.description = description;
+    stadium.location = location
+    stadium.delivery_zone = delivery_zone;
+    stadium.zones = zones;
+    stadium.access = access;
+    stadium.modified_date = Date.now();
+  }
 
   try {
     await stadium.save();
   } catch (err) {
+    console.log(err)
     const error = new HttpError(
       'Something went wrong, could not update stadium.',
       500

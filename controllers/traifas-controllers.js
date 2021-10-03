@@ -108,7 +108,38 @@ const createTarifa = async (req, res, next) => {
     res.status(201).json({ tarifa: createdTarifas });
 };
 
+const deleteTarifaByStadiumId = async (req, res, next) => {
+    const stadiumId = req.params.id;
+  
+    let tarifa;
+    try {
+      tarifa = await Tarifas.findOne({ stadium_id: stadiumId });
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not delete tarifa.',
+        500
+      );
+      return next(error);
+    }
+
+    console.log(tarifa)
+  
+    try {
+      await tarifa.remove();
+    } catch (err) {
+      console.log(err)
+      const error = new HttpError(
+        'Something went wrong, could not delete tarfia.',
+        500
+      );
+      return next(error);
+    }
+  
+    res.status(200).json({ message: 'Deleted tarfia.' });
+  };
+
 exports.getAllTarifas = getAllTarifas;
 exports.getTarifaByPostalCode = getTarifaByPostalCode;
 exports.getTarifaByStadiumId = getTarifaByStadiumId;
 exports.createTarifa = createTarifa;
+exports.deleteTarifaByStadiumId = deleteTarifaByStadiumId;

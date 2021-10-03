@@ -80,6 +80,29 @@ const getEventByStadiumId = async (req, res, next) => {
   res.json({ events: events.map(event => event.toObject({ getters: true })) });
 };
 
+const getPrincipalEvents = async (req, res, next) => {
+  const stadiumId = req.params.uid;
+
+  let events;
+  try {
+    events = await Events.find({ isImportant: true });
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching palcos failed, please try again later',
+      500
+    );
+    return next(error);
+  }
+
+  if (!events || events.length === 0) {
+    return next(
+      new HttpError('Could not find events for the provided user id.', 404)
+    );
+  }
+
+  res.json({ events: events.map(event => event.toObject({ getters: true })) });
+};
+
 const createEvent = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -125,7 +148,7 @@ const updateEvent = async (req, res, next) => {
     );
   }
 
-  const { places, disponibility, type, home, visitor, name, tour_name, date, time, jornada, competition_id, stadium_id, isImportant } = req.body;
+  const { type, home, visitor, name, tour_name, event_color, date, time, jornada, competition_id, stadium_id, isImportant } = req.body;
   const eventId = req.params.pid;
 
   let event;
@@ -139,20 +162,21 @@ const updateEvent = async (req, res, next) => {
     return next(error);
   }
 
-  event.places = places;
-  event.disponibility = disponibility;
-  event.type = type;
-  event.home = home;
-  event.visitor = visitor;
-  event.name = name;
-  event.tour_name = tour_name;
-  event.date = date;
-  event.time = time;
-  event.jornada = jornada;
-  event.competition_id = competition_id;
-  event.stadium_id = stadium_id;
-  event.isImportant = isImportant;
-  event.modified_date = Date.now;
+  if(event){
+    event.type = type;
+    event.home = home;
+    event.visitor = visitor;
+    event.name = name;
+    event.tour_name = tour_name;
+    event.event_color = event_color;
+    event.date = date;
+    event.time = time;
+    event.jornada = jornada;
+    event.competition_id = competition_id;
+    event.stadium_id = stadium_id;
+    event.isImportant = isImportant;
+    event.modified_date = Date.now();
+  }
 
   try {
     await event.save();
@@ -197,6 +221,7 @@ const deleteEvent = async (req, res, next) => {
 exports.getAllEvents = getAllEvents;
 exports.getEventById = getEventById;
 exports.getEventByStadiumId = getEventByStadiumId;
+exports.getPrincipalEvents = getPrincipalEvents;
 exports.createEvent = createEvent;
 exports.updateEvent = updateEvent;
 exports.deleteEvent = deleteEvent;

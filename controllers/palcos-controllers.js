@@ -120,12 +120,13 @@ const createPalco = async (req, res, next) => {
 const updatePalco = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log(errors)
     return next(
       new HttpError('Invalid inputs passed, please check your data.', 422)
     );
   }
 
-  const { name, level, zone, num_cards, description, price, active, stadium_id, user_id, access, comision } = req.body;
+  const { name, type, zone, access, num_cards, description, price, owner_price, stadium_id, comision, user_id, } = req.body;
   const palcoId = req.params.pid;
 
   let palco;
@@ -139,18 +140,20 @@ const updatePalco = async (req, res, next) => {
     return next(error);
   }
 
-  palco.name = name;
-  palco.level = level;
-  palco.zone = zone;
-  palco.num_cards = num_cards;
-  palco.description = description;
-  palco.price = price;
-  palco, active = active;
-  palco.stadium_id = stadium_id;
-  palco.user_id = user_id;
-  palco.comision = comision;
-  palco.access = access;
-  palco.modified_date = Date.now;
+  if(palco){
+    palco.name = name;
+    palco.type = type;
+    palco.zone = zone;
+    palco.access = access;
+    palco.num_cards = num_cards;
+    palco.description = description;
+    palco.price = price;
+    palco.owner_price = owner_price;
+    palco.stadium_id = stadium_id;
+    palco.comision = comision;
+    palco.user_id = user_id;
+    palco.modified_date = Date.now();
+  }
 
   try {
     await palco.save();

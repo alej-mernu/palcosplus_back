@@ -128,9 +128,9 @@ const updateTeam = async (req, res, next) => {
   const { name, country, stadium_id, principal_color, secundary_color } = req.body;
   const teamId = req.params.pid;
 
-  let palco;
+  let team;
   try {
-    palco = await Palco.findById(teamId);
+    team = await Team.findById(teamId);
   } catch (err) {
     const error = new HttpError(
       'Something went wrong, could not update team.',
@@ -139,15 +139,17 @@ const updateTeam = async (req, res, next) => {
     return next(error);
   }
 
-  team.name = name;
-  team.country = country;
-  team.stadium_id = stadium_id;
-  team.principal_color = principal_color;
-  team.secundary_color = secundary_color;
-  palco.modified_date = Date.now;
+  if(team){
+    team.name = name;
+    team.country = country;
+    team.stadium_id = stadium_id;
+    team.principal_color = principal_color;
+    team.secundary_color = secundary_color;
+    team.modified_date = Date.now();
+  }
 
   try {
-    await palco.save();
+    await team.save();
   } catch (err) {
     const error = new HttpError(
       'Something went wrong, could not update team.',

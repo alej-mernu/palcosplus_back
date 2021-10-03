@@ -111,10 +111,12 @@ const updateCompetition = async (req, res, next) => {
     return next(error);
   }
 
-  competition.name = name;
-  competition.type = type;
-  competition.jornadas = jornadas;
-  competition.modified_date = Date.now;
+  if(competition){
+    competition.name = name;
+    competition.type = type;
+    competition.jornadas = jornadas;
+    competition.modified_date = Date.now();
+  }
 
   try {
     await competition.save();
