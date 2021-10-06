@@ -30,6 +30,11 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.get('/health', function (req,res,next){
+  return
+  next()
+})
+
 app.use('/user', usersRoutes);
 app.use('/stadiums', stadiumsRoutes);
 app.use('/palcos', palcosRoutes);
