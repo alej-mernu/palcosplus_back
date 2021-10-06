@@ -56,22 +56,24 @@ const signup = async (req, res, next) => {
 
   const { name, last_name, email, tel, date_birth, password, role, origin, alias, country, state, city, suburb, postal_code, address, interior_num } = req.body;
 
-  let image
+  let image=''
   if (req.body.imageUrl) {
     image = req.body.imageUrl;
-  } else if (req.file.path) {
-    image = req.file.path;
+  } else if (req.file) {
+    if (req.file.path) {
+     image = req.file.path;
+    }
   }
 
   let existingUser
   try {
     existingUser = await User.findOne({ email: email })
   } catch (err) {
+    console.log(err)
     const error = new HttpError(
       'Signing up failed, please try again later.',
       500
     );
-    console.log(error);
     return next(error);
   }
 
@@ -103,7 +105,7 @@ const signup = async (req, res, next) => {
   try {
     await createdUser.save();
   } catch (err) {
-    console.log('error')
+    console.log(err)
     const error = new HttpError(
       'Signing up failed, please try again.',
       500
