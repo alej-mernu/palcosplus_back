@@ -58,11 +58,11 @@ const getPalcoById = async (req, res, next) => {
 };
 
 const getPalcoByStadiumId = async (req, res, next) => {
-  const stadiumId = req.params.id;
+  const stadiumId = req.params.pid;
 
   let palcos;
   try {
-    palcos = await Palco.find({ stadiumId });
+    palcos = await Palco.find({ stadium_id: stadiumId });
   } catch (err) {
     const error = new HttpError(
       'Fetching palcos failed, please try again later',

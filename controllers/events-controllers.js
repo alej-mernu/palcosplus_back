@@ -58,7 +58,7 @@ const getEventById = async (req, res, next) => {
 };
 
 const getEventByStadiumId = async (req, res, next) => {
-  const stadiumId = req.params.uid;
+  const stadiumId = req.params.pid;
 
   let events;
   try {
