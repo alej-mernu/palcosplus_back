@@ -130,7 +130,6 @@ const signup = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  console.log('entra al login')
   const { email, password } = req.body;
 
   let existingUser;
