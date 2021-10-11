@@ -20,7 +20,6 @@ const HttpError = require('./models/http-error');
 const app = express();
 
 app.use(express.json());
-app.use('/public/images', express.static(path.join('public', 'images')));
 
 app.use(function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -30,9 +29,10 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use('/public/images', express.static(path.join('public', 'images')));
+
 app.get('/health', function (req,res,next){
   return
-  next()
 })
 
 app.use('/user', usersRoutes);

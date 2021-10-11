@@ -58,6 +58,7 @@ const getStadiumById = async (req, res, next) => {
 };
 
 const createStadium = async (req, res, next) => {
+  console.log('entra a crear el estadio')
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
