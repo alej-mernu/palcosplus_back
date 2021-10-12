@@ -186,10 +186,11 @@ const login = async (req, res, next) => {
     console.log(error);
     return next(error);
   }
-
+  
   res.json({
     userId: existingUser.id,
     email: existingUser.email,
+    role: existingUser.role,
     token: token
   });
 };
