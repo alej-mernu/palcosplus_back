@@ -195,9 +195,27 @@ const deletePalco = async (req, res, next) => {
   res.status(200).json({ message: 'Deleted palco.' });
 };
 
+const deletePalcoByStadiumId = async (req, res, next) => {
+  const stadiumId = req.params.id;
+
+  try {
+    await Palco.deleteMany({ stadium_id: stadiumId });
+  } catch (err) {
+    console.log(err)
+    const error = new HttpError(
+      'Something went wrong, could not delete palco.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ message: 'Deleted palco.' });
+};
+
 exports.getAllPalcos = getAllPalcos;
 exports.getPalcoById = getPalcoById;
 exports.getPalcoByStadiumId = getPalcoByStadiumId;
 exports.createPalco = createPalco;
 exports.updatePalco = updatePalco;
 exports.deletePalco = deletePalco;
+exports.deletePalcoByStadiumId = deletePalcoByStadiumId;

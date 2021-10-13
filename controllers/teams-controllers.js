@@ -189,9 +189,27 @@ const deleteTeam = async (req, res, next) => {
   res.status(200).json({ message: 'Deleted palco.' });
 };
 
+const deleteTeamByStadiumId = async (req, res, next) => {
+  const stadiumId = req.params.pid;
+
+  try {
+    await Team.deleteMany({ stadium_id: stadiumId });
+  } catch (err) {
+    console.log(err)
+    const error = new HttpError(
+      'Something went wrong, could not delete team.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ message: 'Deleted Team.' });
+};
+
 exports.getAllTeams = getAllTeams;
 exports.getTeamById = getTeamById;
 exports.getTeamByStadiumId = getTeamByStadiumId;
 exports.createTeam = createTeam;
 exports.updateTeam = updateTeam;
 exports.deleteTeam = deleteTeam;
+exports.deleteTeamByStadiumId = deleteTeamByStadiumId;

@@ -56,5 +56,6 @@ router.patch(
 );
 
 router.delete('/:pid', teamsControllers.deleteTeam);
+router.delete('/stadium/:pid', teamsControllers.deleteTeamByStadiumId);
 
 module.exports = router;

@@ -61,5 +61,7 @@ router.patch(
 );
 
 router.delete('/:pid', reservationControllers.deleteReservation);
+router.delete('/event/:pid', reservationControllers.deleteRentByEventId);
+router.delete('/palco/:pid', reservationControllers.deleteReservationByPalcoId);
 
 module.exports = router;

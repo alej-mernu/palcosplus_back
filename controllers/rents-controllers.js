@@ -130,8 +130,44 @@ const updateRent = async (req, res, next) => {
   res.status(200).json({ rent: rent.toObject({ getters: true }) });
 };
 
+const deleteRentByPalcoId = async (req, res, next) => {
+  const palcoId = req.params.id;
+
+  try {
+    await Rent.deleteMany({ palco_id: palcoId });
+  } catch (err) {
+    console.log(err)
+    const error = new HttpError(
+      'Something went wrong, could not delete rent.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ message: 'Deleted rent.' });
+};
+
+const deleteRentByEventId = async (req, res, next) => {
+  const eventId = req.params.id;
+
+  try {
+    await Rent.deleteMany({ event_id: eventId });
+  } catch (err) {
+    console.log(err)
+    const error = new HttpError(
+      'Something went wrong, could not delete rent.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ message: 'Deleted rent.' });
+};
+
 exports.getRents = getRents;
 exports.getActiveRents = getActiveRents;
 exports.getRentsId = getRentsId;
 exports.createRent = createRent;
 exports.updateRent = updateRent;
+exports.deleteRentByPalcoId = deleteRentByPalcoId;
+exports.deleteRentByEventId = deleteRentByEventId;

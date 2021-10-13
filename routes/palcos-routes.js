@@ -32,5 +32,6 @@ router.patch(
 );
 
 router.delete('/:pid', palcosControllers.deletePalco);
+router.delete('/stadium/:id', palcosControllers.deletePalcoByStadiumId);
 
 module.exports = router;

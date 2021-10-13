@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 
 const HttpError = require('../models/http-error');
 const Reservation = require('../models/reservation');
+const { deleteRentByEventId } = require('./rents-controllers');
 
 const getReservationById = async (req, res, next) => {
   const reservationId = req.params.pid;
@@ -194,6 +195,40 @@ const deleteReservation = async (req, res, next) => {
   res.status(200).json({ message: 'Deleted reservation.' });
 };
 
+const deleteReservationByPalcoId = async (req, res, next) => {
+  const palcoId = req.params.id;
+
+  try {
+    await Reservation.deleteMany({ palco_id: palcoId });
+  } catch (err) {
+    console.log(err)
+    const error = new HttpError(
+      'Something went wrong, could not delete reservation.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ message: 'Deleted reservation.' });
+};
+
+const deleteReservationByEventId = async (req, res, next) => {
+  const eventId = req.params.id;
+
+  try {
+    await Reservation.deleteMany({ event_id: eventId });
+  } catch (err) {
+    console.log(err)
+    const error = new HttpError(
+      'Something went wrong, could not delete reservation.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ message: 'Deleted reservation.' });
+};
+
 exports.getReservationById = getReservationById;
 exports.getReservationByPalcoId = getReservationByPalcoId;
 exports.getReservationByEventId = getReservationByEventId;
@@ -201,3 +236,5 @@ exports.getReservationByUserId = getReservationByUserId;
 exports.createReservation = createReservation;
 exports.updateReservation = updateReservation;
 exports.deleteReservation = deleteReservation;
+exports.deleteRentByEventId = deleteRentByEventId;
+exports.deleteReservationByPalcoId = deleteReservationByPalcoId;

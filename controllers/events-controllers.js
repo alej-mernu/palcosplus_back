@@ -218,6 +218,57 @@ const deleteEvent = async (req, res, next) => {
   res.status(200).json({ message: 'Deleted event.' });
 };
 
+const deleteEvenyByStadiumId = async (req, res, next) => {
+  const stadiumId = req.params.id;
+
+  try {
+    await Events.deleteMany({ stadium_id: stadiumId });
+  } catch (err) {
+    console.log(err)
+    const error = new HttpError(
+      'Something went wrong, could not delete event.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ message: 'Deleted event.' });
+};
+
+const deleteEvenyByTeamId = async (req, res, next) => {
+  const teamId = req.params.id;
+
+  try {
+    await Events.deleteMany({$or: [{ home: teamId}, {visitor: teamId}]});
+  } catch (err) {
+    console.log(err)
+    const error = new HttpError(
+      'Something went wrong, could not delete event.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ message: 'Deleted event.' });
+};
+
+const deleteEvenyByCompetitionId = async (req, res, next) => {
+  const competitionId = req.params.id;
+
+  try {
+    await Events.deleteMany({ competition_id: competitionId });
+  } catch (err) {
+    console.log(err)
+    const error = new HttpError(
+      'Something went wrong, could not delete event.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ message: 'Deleted event.' });
+};
+
 exports.getAllEvents = getAllEvents;
 exports.getEventById = getEventById;
 exports.getEventByStadiumId = getEventByStadiumId;
@@ -225,3 +276,6 @@ exports.getPrincipalEvents = getPrincipalEvents;
 exports.createEvent = createEvent;
 exports.updateEvent = updateEvent;
 exports.deleteEvent = deleteEvent;
+exports.deleteEvenyByStadiumId = deleteEvenyByStadiumId;
+exports.deleteEvenyByTeamId = deleteEvenyByTeamId;
+exports.deleteEvenyByCompetitionId = deleteEvenyByCompetitionId;

@@ -39,5 +39,8 @@ router.patch(
 );
 
 router.delete('/:pid', eventsControllers.deleteEvent);
+router.delete('/stadium/:id', eventsControllers.deleteEvenyByStadiumId);
+router.delete('/team/:id', eventsControllers.deleteEvenyByTeamId);
+router.delete('/competition/:id', eventsControllers.deleteEvenyByCompetitionId);
 
 module.exports = router;

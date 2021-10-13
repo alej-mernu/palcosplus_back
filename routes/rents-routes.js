@@ -15,5 +15,7 @@ router.post(
 );
 
 router.patch('/:id',rentsControllers.updateRent);
+router.delete('/palco/:id',rentsControllers.deleteRentByPalcoId);
+router.delete('/event/:id',rentsControllers.deleteRentByEventId);
 
 module.exports = router;
