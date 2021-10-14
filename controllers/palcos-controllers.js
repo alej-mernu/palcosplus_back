@@ -126,8 +126,21 @@ const updatePalco = async (req, res, next) => {
     );
   }
 
-  const { name, type, zone, access, num_cards, description, price, owner_price, stadium_id, comision, user_id, } = req.body;
+  const { name, type, zone, access, num_cards, description, price, owner_price, stadium_id, comision, user_id, imagesName } = req.body;
   const palcoId = req.params.pid;
+
+  let images = []
+  if(req.files){
+    let file = 0;
+    for(let i = 0; i<imagesName.length; i++){
+      if(imagesName[i]===''){
+        images.push(req.files[file].path)
+        file++;
+      }else{
+        images.push('public/images'+imagesName[i])
+      }
+    }
+  }
 
   let palco;
   try {
@@ -152,6 +165,7 @@ const updatePalco = async (req, res, next) => {
     palco.stadium_id = stadium_id;
     palco.comision = comision;
     palco.user_id = user_id;
+    palco.images=images;
     palco.modified_date = Date.now();
   }
 

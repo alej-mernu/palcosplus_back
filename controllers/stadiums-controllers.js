@@ -58,7 +58,6 @@ const getStadiumById = async (req, res, next) => {
 };
 
 const createStadium = async (req, res, next) => {
-  console.log('entra a crear el estadio')
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
@@ -104,8 +103,21 @@ const updateStadium = async (req, res, next) => {
     );
   }
 
-  const { name, country, city, capacity, fundation_date, local_teams, description, location, zones, delivery_zone, access } = req.body;
+  const { name, country, city, capacity, fundation_date, local_teams, description, location, zones, delivery_zone, access, imagesName } = req.body;
   const stadiumId = req.params.pid;
+
+  let images = []
+  if(req.files){
+    let file = 0;
+    for(let i = 0; i<imagesName.length; i++){
+      if(imagesName[i]===''){
+        images.push(req.files[file].path)
+        file++;
+      }else{
+        images.push('public/images'+imagesName[i])
+      }
+    }
+  }
 
   let stadium;
   try {
@@ -130,6 +142,7 @@ const updateStadium = async (req, res, next) => {
     stadium.delivery_zone = delivery_zone;
     stadium.zones = zones;
     stadium.access = access;
+    stadium.images=images;
     stadium.modified_date = Date.now();
   }
 

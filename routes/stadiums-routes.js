@@ -49,6 +49,7 @@ router.post(
 
 router.patch(
   '/:pid',
+  fileUpload.array('images'),
   stadiumsControllers.updateStadium
 );
 

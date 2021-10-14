@@ -25,6 +25,7 @@ router.post(
 
 router.patch(
   '/:pid',
+  fileUpload.array('images'),
   [
     check('name')
       .not()

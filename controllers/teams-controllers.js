@@ -126,8 +126,21 @@ const updateTeam = async (req, res, next) => {
     );
   }
 
-  const { name, country, stadium_id, principal_color, secundary_color } = req.body;
+  const { name, country, stadium_id, principal_color, secundary_color, imagesName } = req.body;
   const teamId = req.params.pid;
+
+  let images = []
+  if(req.files){
+    let file = 0;
+    for(let i = 0; i<imagesName.length; i++){
+      if(imagesName[i]===''){
+        images.push(req.files[file].path)
+        file++;
+      }else{
+        images.push('public/images'+imagesName[i])
+      }
+    }
+  }
 
   let team;
   try {
@@ -146,6 +159,7 @@ const updateTeam = async (req, res, next) => {
     team.stadium_id = stadium_id;
     team.principal_color = principal_color;
     team.secundary_color = secundary_color;
+    team.images=images;
     team.modified_date = Date.now();
   }
 

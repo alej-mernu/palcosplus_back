@@ -97,8 +97,21 @@ const updateCompetition = async (req, res, next) => {
     );
   }
 
-  const { name, type, jornadas } = req.body;
+  const { name, type, jornadas, imagesName } = req.body;
   const competitionId = req.params.pid;
+
+  let images = []
+  if(req.files){
+    let file = 0;
+    for(let i = 0; i<imagesName.length; i++){
+      if(imagesName[i]===''){
+        images.push(req.files[file].path)
+        file++;
+      }else{
+        images.push('public/images'+imagesName[i])
+      }
+    }
+  }
 
   let competition;
   try {
@@ -115,6 +128,7 @@ const updateCompetition = async (req, res, next) => {
     competition.name = name;
     competition.type = type;
     competition.jornadas = jornadas;
+    competition.images=images;
     competition.modified_date = Date.now();
   }
 
