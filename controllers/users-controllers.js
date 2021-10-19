@@ -180,7 +180,7 @@ const login = async (req, res, next) => {
     token = jwt.sign({ userId: existingUser.id }, "palcosplusencrypttokenkey", { expiresIn: '2h' })
   } catch {
     const error = new HttpError(
-      'Signing up failed, please try again.',
+      'Login failed, please try again.',
       500
     );
     console.log(error);
