@@ -15,6 +15,7 @@ const reservationRoutes = require('./routes/reservations-routes');
 const paymentRoutes = require('./routes/payments-routes');
 const tarifasRoutes = require('./routes/tarifas-routes');
 const rentsRoutes = require('./routes/rents-routes');
+const emailsRoutes = require('./routes/emails-routes');
 const HttpError = require('./models/http-error');
 
 const app = express();
@@ -45,6 +46,7 @@ app.use('/reservation', reservationRoutes);
 app.use('/pay', paymentRoutes);
 app.use('/tarifas', tarifasRoutes);
 app.use('/rents', rentsRoutes);
+app.use('/sendEmail', emailsRoutes);
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route.', 404);
@@ -66,7 +68,7 @@ app.use((error, req, res, next) => {
 
 const port = (process.env.port || 5000);
 mongoose
-  .connect("mongodb+srv://palcosplus:Palcosplus.10@cluster0.bsm72.mongodb.net/PalcosPlusDataBase?retryWrites=true&w=majority", { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+  .connect("mongodb+srv://alej_mernu:Janomn_4@cluster0.v7njn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
   .then(() => {
     app.listen(port, function () {
       console.log("server listening port " + port);
