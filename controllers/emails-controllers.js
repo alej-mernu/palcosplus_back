@@ -185,9 +185,9 @@ const sendConfirmation = async (req, res, next) => {
   const htmlToSend = template(replacements);
 
   AWS.config.update({
-    accessKeyId: process.env.AWS_SES_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SES_SECRET_ACCESS_KEY,
-    region: process.env.AWS_SES_REGION,
+    accessKeyId: SESConfig.accessKeyId,
+    secretAccessKey: SESConfig.secretAccessKey,
+    region: SESConfig.region,
   });
 
   let transporter = nodemailer.createTransport({
@@ -220,9 +220,9 @@ const sendQuestions = async (req, res, next) => {
   const { name, phone, email, message } = req.body;
 
   AWS.config.update({
-    accessKeyId: process.env.AWS_SES_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SES_SECRET_ACCESS_KEY,
-    region: process.env.AWS_SES_REGION,
+    accessKeyId: SESConfig.accessKeyId,
+    secretAccessKey: SESConfig.secretAccessKey,
+    region: SESConfig.region,
   });
 
   let transporter = nodemailer.createTransport({
@@ -260,9 +260,9 @@ const sendApplication = async (req, res, next) => {
     req.body;
 
   AWS.config.update({
-    accessKeyId: process.env.AWS_SES_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SES_SECRET_ACCESS_KEY,
-    region: process.env.AWS_SES_REGION,
+    accessKeyId: SESConfig.accessKeyId,
+    secretAccessKey: SESConfig.secretAccessKey,
+    region: SESConfig.region,
   });
 
   let transporter = nodemailer.createTransport({
