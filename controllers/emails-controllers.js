@@ -210,7 +210,7 @@ const sendConfirmation = async (req, res, next) => {
       res.status(200).json({ message: "Email sent." });
     },
     (err) => {
-      console.log(err);
+      console.log("error sending mail: " + err);
       res.status(404).json({ message: "Error" });
     }
   );
@@ -249,7 +249,7 @@ const sendQuestions = async (req, res, next) => {
       res.status(200).json({ message: "Email sent." });
     },
     (err) => {
-      console.log(err);
+      console.log("error sending mail: " + err);
       res.status(404).json({ message: "Error" });
     }
   );
@@ -293,7 +293,7 @@ const sendApplication = async (req, res, next) => {
       res.status(200).json({ message: "Email sent." });
     },
     (err) => {
-      console.log(err);
+      console.log("error sending mail: " + err);
       res.status(404).json({ message: "Error" });
     }
   );
