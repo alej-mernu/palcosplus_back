@@ -7,9 +7,9 @@ const handlebars = require("handlebars");
 const fs = require("fs");
 
 const SESConfig = {
-  accessKeyId: "AKIA425AHBQLXRBIJEHS",
-  secretAccessKey: "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",
-  region: "us-east-2",
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_SES_REGION,
 };
 
 const sendEmail = async (req, res, next) => {
@@ -273,7 +273,7 @@ const sendApplication = async (req, res, next) => {
 
   const mailOptions = {
     from: '"Solicitud" <contacto@palcosplus.com>',
-    to: "contacto@palcosplus.com",
+    to: "contacto@palcosplus",
     subject: "Solicitud de Usuario",
     text: "",
     html: `<h2>Datos del usuario</h2>

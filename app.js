@@ -70,13 +70,17 @@ app.use((error, req, res, next) => {
 });
 
 const port = process.env.port || 5000;
+const db = process.env.DB_CONNECTION;
 mongoose
-  .connect(
-    "mongodb+srv://palcosplus:Palcosplus.10@cluster0.bsm72.mongodb.net/PalcosPlusDataBase?retryWrites=true&w=majority",
-    { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true }
-  )
+  .connect(db, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useCreateIndex: true,
+  })
   .then(() => {
     app.listen(port, function () {
+      console.log("DB" + db);
+      console.log("aws public key " + process.env.AWS_ACCESS_KEY_ID);
       console.log("server listening port " + port);
     });
   })
