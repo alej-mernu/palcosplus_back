@@ -206,7 +206,7 @@ const sendConfirmation = async (req, res, next) => {
 
   const info = await transporter.sendMail(mailOptions).then(
     (response) => {
-      console.log("Message sent: %s", response.messageId);
+      console.log("Message sent to user " + email + ": %s", response.messageId);
       res.status(200).json({ message: "Email sent." });
     },
     (err) => {
@@ -273,7 +273,7 @@ const sendApplication = async (req, res, next) => {
 
   const mailOptions = {
     from: '"Solicitud" <contacto@palcosplus.com>',
-    to: "contacto@palcosplus",
+    to: "contacto@palcosplus.com",
     subject: "Solicitud de Usuario",
     text: "",
     html: `<h2>Datos del usuario</h2>
