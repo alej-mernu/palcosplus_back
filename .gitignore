@@ -1,3 +1,6 @@
 # palcosplus_back
 /node_modules
+/mail/images
+/public
+/views
 .env
