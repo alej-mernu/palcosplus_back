@@ -79,8 +79,6 @@ mongoose
   })
   .then(() => {
     app.listen(port, function () {
-      console.log("DB" + db);
-      console.log("aws public key " + process.env.AWS_ACCESS_KEY_ID);
       console.log("server listening port " + port);
     });
   })
