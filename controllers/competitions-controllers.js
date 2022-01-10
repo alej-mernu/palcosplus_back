@@ -4,7 +4,6 @@ const HttpError = require('../models/http-error');
 const Competition = require('../models/competition');
 
 const getAllCompetition = async (req, res, next) => {
-
   let competition;
   try {
     competition = await Competition.find();
@@ -17,16 +16,12 @@ const getAllCompetition = async (req, res, next) => {
   }
 
   if (!competition) {
-    const error = new HttpError(
-      'Does not exist Competitions',
-      404
-    );
+    const error = new HttpError('Does not exist Competitions', 404);
     return next(error);
   }
 
-
   competition.forEach((data, idx) => {
-    competition[idx] = data.toObject({ getters: true })
+    competition[idx] = data.toObject({ getters: true });
   });
 
   res.json({ competition: competition });
@@ -66,14 +61,17 @@ const createCompetition = async (req, res, next) => {
   }
 
   const { name, type, jornadas } = req.body;
-  let images = []
-  if(req.files){
-    req.files.map(file => {
-      images.push(file.path)
-    })
+  let images = [];
+  if (req.files) {
+    req.files.map((file) => {
+      images.push(file.location);
+    });
   }
   const createdCompetition = new Competition({
-    name, type, jornadas, images
+    name,
+    type,
+    jornadas,
+    images,
   });
 
   try {
@@ -100,15 +98,15 @@ const updateCompetition = async (req, res, next) => {
   const { name, type, jornadas, imagesName } = req.body;
   const competitionId = req.params.pid;
 
-  let images = []
-  if(req.files){
+  let images = [];
+  if (req.files) {
     let file = 0;
-    for(let i = 0; i<imagesName.length; i++){
-      if(imagesName[i]===''){
-        images.push(req.files[file].path)
+    for (let i = 0; i < imagesName.length; i++) {
+      if (imagesName[i] === '') {
+        images.push(req.files[file].location);
         file++;
-      }else{
-        images.push('public/images'+imagesName[i])
+      } else {
+        images.push(imagesName[i]);
       }
     }
   }
@@ -124,11 +122,11 @@ const updateCompetition = async (req, res, next) => {
     return next(error);
   }
 
-  if(competition){
+  if (competition) {
     competition.name = name;
     competition.type = type;
     competition.jornadas = jornadas;
-    competition.images=images;
+    competition.images = images;
     competition.modified_date = Date.now();
   }
 
@@ -142,7 +140,9 @@ const updateCompetition = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(200).json({ competition: competition.toObject({ getters: true }) });
+  res
+    .status(200)
+    .json({ competition: competition.toObject({ getters: true }) });
 };
 
 const deleteCompetition = async (req, res, next) => {

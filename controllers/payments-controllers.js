@@ -1,59 +1,58 @@
-const stripe = require("stripe")(
-  "sk_test_51J8qvPGQnABWqJEOFz9NpPvABEUfYpmz5OIFRvr0n3MiQhVfbyIjAU1ZBKSOYH0XnheV540L7mpBXLnrglIe7GzF005CE15iFT"
-);
+require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const ErrorCatcher = ({ decline_code, code }) => {
   switch (code) {
-    case "card_declined":
+    case 'card_declined':
       switch (decline_code) {
-        case "insufficient_funds":
+        case 'insufficient_funds':
           return {
             id: 801,
-            msg: "Tarjeta Sin Fondos",
+            msg: 'Tarjeta Sin Fondos',
           };
-        case "lost_card":
+        case 'lost_card':
           return {
             id: 802,
-            msg: "Tarjeta Reportada como Perdida",
+            msg: 'Tarjeta Reportada como Perdida',
           };
-        case "stolen_card":
+        case 'stolen_card':
           return {
             id: 803,
-            msg: "Tarjeta con Reporte de Robo",
+            msg: 'Tarjeta con Reporte de Robo',
           };
         default:
           return {
             id: 800,
-            msg: "Tarjeta Declinada",
+            msg: 'Tarjeta Declinada',
           };
       }
 
-    case "expired_card":
+    case 'expired_card':
       return {
         id: 804,
-        msg: "Tarjeta Expirada",
+        msg: 'Tarjeta Expirada',
       };
-    case "incorrect_cvc":
+    case 'incorrect_cvc':
       return {
         id: 805,
-        msg: "Codigo de Seguridad incorrecto",
+        msg: 'Codigo de Seguridad incorrecto',
       };
-    case "processing_error":
+    case 'processing_error':
       return {
         id: 806,
-        msg: "Error al Procesar el pago",
+        msg: 'Error al Procesar el pago',
       };
     default:
       return {
         id: 500,
-        msg: "error en la tarjeta",
+        msg: 'error en la tarjeta',
       };
   }
 };
 
 const paymentMethod = async (number, exp_month, exp_year, cvc) => {
   const card = await stripe.paymentMethods.create({
-    type: "card",
+    type: 'card',
     card: {
       number: number,
       exp_month: exp_month,
@@ -75,7 +74,7 @@ const paymentCheckout = async (req, res) => {
 
     const payment = await stripe.paymentIntents.create({
       amount: totalAmount,
-      currency: "mxn",
+      currency: 'mxn',
       description: description,
       payment_method: card,
       confirm: true,

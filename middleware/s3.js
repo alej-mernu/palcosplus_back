@@ -11,8 +11,8 @@ const MIME_TYPE_MAP = {
 
 const bucketName = process.env.AWS_BUCKET_NAME;
 const region = process.env.AWS_BUCKET_REGION;
-const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+const accessKeyId = process.env.AWS_BUCKET_ACCESS_KEY;
+const secretAccessKey = process.env.AWS_BUCKET_SECRET_ACCESS_KEY;
 
 const s3 = new AWS.S3({
   region,
@@ -20,7 +20,7 @@ const s3 = new AWS.S3({
   secretAccessKey,
 });
 
-const fileUpload = multer({
+var fileUpload = multer({
   storage: multerS3({
     s3: s3,
     bucket: bucketName,

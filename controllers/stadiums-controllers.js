@@ -4,7 +4,6 @@ const HttpError = require('../models/http-error');
 const Stadium = require('../models/stadium');
 
 const getAllStadiums = async (req, res, next) => {
-
   let stadium;
   try {
     stadium = await Stadium.find();
@@ -17,16 +16,12 @@ const getAllStadiums = async (req, res, next) => {
   }
 
   if (!stadium) {
-    const error = new HttpError(
-      'Does not exist stadiums',
-      404
-    );
+    const error = new HttpError('Does not exist stadiums', 404);
     return next(error);
   }
 
-
   stadium.forEach((data, idx) => {
-    stadium[idx] = data.toObject({ getters: true })
+    stadium[idx] = data.toObject({ getters: true });
   });
 
   res.json({ stadium: stadium });
@@ -65,17 +60,40 @@ const createStadium = async (req, res, next) => {
     );
   }
 
-  const { name, country, city, capacity, fundation_date, local_teams, description, location, zones, delivery_zone, access } = req.body;
-  
-  let images = []
-  if(req.files){
-    req.files.map(file => {
-      images.push(file.path)
-    })
+  const {
+    name,
+    country,
+    city,
+    capacity,
+    fundation_date,
+    local_teams,
+    description,
+    location,
+    zones,
+    delivery_zone,
+    access,
+  } = req.body;
+
+  let images = [];
+  if (req.files) {
+    req.files.map((file) => {
+      images.push(file.location);
+    });
   }
 
   const createdStadium = new Stadium({
-    name, country, city, capacity, fundation_date, local_teams, description, location, zones, delivery_zone, access, images
+    name,
+    country,
+    city,
+    capacity,
+    fundation_date,
+    local_teams,
+    description,
+    location,
+    zones,
+    delivery_zone,
+    access,
+    images,
   });
 
   try {
@@ -103,18 +121,31 @@ const updateStadium = async (req, res, next) => {
     );
   }
 
-  const { name, country, city, capacity, fundation_date, local_teams, description, location, zones, delivery_zone, access, imagesName } = req.body;
+  const {
+    name,
+    country,
+    city,
+    capacity,
+    fundation_date,
+    local_teams,
+    description,
+    location,
+    zones,
+    delivery_zone,
+    access,
+    imagesName,
+  } = req.body;
   const stadiumId = req.params.pid;
 
-  let images = []
-  if(req.files){
+  let images = [];
+  if (req.files) {
     let file = 0;
-    for(let i = 0; i<imagesName.length; i++){
-      if(imagesName[i]===''){
-        images.push(req.files[file].path)
+    for (let i = 0; i < imagesName.length; i++) {
+      if (imagesName[i] === '') {
+        images.push(req.files[file].location);
         file++;
-      }else{
-        images.push('public/images'+imagesName[i])
+      } else {
+        images.push(imagesName[i]);
       }
     }
   }
@@ -130,7 +161,7 @@ const updateStadium = async (req, res, next) => {
     return next(error);
   }
 
-  if(stadium){
+  if (stadium) {
     stadium.name = name;
     stadium.country = country;
     stadium.city = city;
@@ -138,18 +169,18 @@ const updateStadium = async (req, res, next) => {
     stadium.fundation_date = fundation_date;
     stadium.local_teams = local_teams;
     stadium.description = description;
-    stadium.location = location
+    stadium.location = location;
     stadium.delivery_zone = delivery_zone;
     stadium.zones = zones;
     stadium.access = access;
-    stadium.images=images;
+    stadium.images = images;
     stadium.modified_date = Date.now();
   }
 
   try {
     await stadium.save();
   } catch (err) {
-    console.log(err)
+    console.log(err);
     const error = new HttpError(
       'Something went wrong, could not update stadium.',
       500

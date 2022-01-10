@@ -4,7 +4,6 @@ const HttpError = require('../models/http-error');
 const Team = require('../models/teams');
 
 const getAllTeams = async (req, res, next) => {
-
   let teams;
   try {
     teams = await Team.find();
@@ -17,16 +16,12 @@ const getAllTeams = async (req, res, next) => {
   }
 
   if (!teams) {
-    const error = new HttpError(
-      'Does not exist the teams',
-      404
-    );
+    const error = new HttpError('Does not exist the teams', 404);
     return next(error);
   }
 
-
   teams.forEach((data, idx) => {
-    teams[idx] = data.toObject({ getters: true })
+    teams[idx] = data.toObject({ getters: true });
   });
 
   res.json({ teams: teams });
@@ -77,7 +72,7 @@ const getTeamByStadiumId = async (req, res, next) => {
     );
   }
 
-  res.json({ teams: teams.map(team => team.toObject({ getters: true })) });
+  res.json({ teams: teams.map((team) => team.toObject({ getters: true })) });
 };
 
 const createTeam = async (req, res, next) => {
@@ -88,16 +83,22 @@ const createTeam = async (req, res, next) => {
     );
   }
 
-  const { name, country, stadium_id, principal_color, secundary_color } = req.body;
-  let images = []
-  if(req.files){
-    req.files.map(file => {
-      images.push(file.path)
-    })
+  const { name, country, stadium_id, principal_color, secundary_color } =
+    req.body;
+  let images = [];
+  if (req.files) {
+    req.files.map((file) => {
+      images.push(file.location);
+    });
   }
 
   const createdTeam = new Team({
-    name, country, stadium_id, principal_color, secundary_color, images
+    name,
+    country,
+    stadium_id,
+    principal_color,
+    secundary_color,
+    images,
   });
 
   try {
@@ -107,11 +108,8 @@ const createTeam = async (req, res, next) => {
       }
     });
   } catch (err) {
-    console.log(err)
-    const error = new HttpError(
-      'Creating team failed, please try again.',
-      500
-    );
+    console.log(err);
+    const error = new HttpError('Creating team failed, please try again.', 500);
     return next(error);
   }
 
@@ -126,18 +124,25 @@ const updateTeam = async (req, res, next) => {
     );
   }
 
-  const { name, country, stadium_id, principal_color, secundary_color, imagesName } = req.body;
+  const {
+    name,
+    country,
+    stadium_id,
+    principal_color,
+    secundary_color,
+    imagesName,
+  } = req.body;
   const teamId = req.params.pid;
 
-  let images = []
-  if(req.files){
+  let images = [];
+  if (req.files) {
     let file = 0;
-    for(let i = 0; i<imagesName.length; i++){
-      if(imagesName[i]===''){
-        images.push(req.files[file].path)
+    for (let i = 0; i < imagesName.length; i++) {
+      if (imagesName[i] === '') {
+        images.push(req.files[file].location);
         file++;
-      }else{
-        images.push('public/images'+imagesName[i])
+      } else {
+        images.push(imagesName[i]);
       }
     }
   }
@@ -153,13 +158,13 @@ const updateTeam = async (req, res, next) => {
     return next(error);
   }
 
-  if(team){
+  if (team) {
     team.name = name;
     team.country = country;
     team.stadium_id = stadium_id;
     team.principal_color = principal_color;
     team.secundary_color = secundary_color;
-    team.images=images;
+    team.images = images;
     team.modified_date = Date.now();
   }
 
@@ -209,7 +214,7 @@ const deleteTeamByStadiumId = async (req, res, next) => {
   try {
     await Team.deleteMany({ stadium_id: stadiumId });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     const error = new HttpError(
       'Something went wrong, could not delete team.',
       500

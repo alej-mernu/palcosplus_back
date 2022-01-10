@@ -4,7 +4,6 @@ const HttpError = require('../models/http-error');
 const Palco = require('../models/palcos');
 
 const getAllPalcos = async (req, res, next) => {
-
   let palcos;
   try {
     palcos = await Palco.find();
@@ -17,16 +16,12 @@ const getAllPalcos = async (req, res, next) => {
   }
 
   if (!palcos) {
-    const error = new HttpError(
-      'Does not exist the palcos',
-      404
-    );
+    const error = new HttpError('Does not exist the palcos', 404);
     return next(error);
   }
 
-
   palcos.forEach((data, idx) => {
-    palcos[idx] = data.toObject({ getters: true })
+    palcos[idx] = data.toObject({ getters: true });
   });
 
   res.json({ palcos: palcos });
@@ -77,7 +72,9 @@ const getPalcoByStadiumId = async (req, res, next) => {
     );
   }
 
-  res.json({ palcos: palcos.map(palco => palco.toObject({ getters: true })) });
+  res.json({
+    palcos: palcos.map((palco) => palco.toObject({ getters: true })),
+  });
 };
 
 const createPalco = async (req, res, next) => {
@@ -88,16 +85,41 @@ const createPalco = async (req, res, next) => {
     );
   }
 
-  const { name, type, zone, access, num_cards, description, price, owner_price, stadium_id, comision, user_id, } = req.body;
-  let images = []
-  if(req.files){
-    req.files.map(file => {
-      images.push(file.path)
-    })
+  const {
+    name,
+    type,
+    zone,
+    access,
+    num_cards,
+    description,
+    price,
+    owner_price,
+    stadium_id,
+    comision,
+    user_id,
+  } = req.body;
+  let images = [];
+
+  if (req.files) {
+    req.files.map((file) => {
+      images.push(file.location);
+    });
   }
 
   const createdPalco = new Palco({
-    name, type, zone, access, num_cards, description, price, owner_price, stadium_id, comision, active: true, user_id, images
+    name,
+    type,
+    zone,
+    access,
+    num_cards,
+    description,
+    price,
+    owner_price,
+    stadium_id,
+    comision,
+    active: true,
+    user_id,
+    images,
   });
 
   try {
@@ -120,24 +142,37 @@ const createPalco = async (req, res, next) => {
 const updatePalco = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log(errors)
+    console.log(errors);
     return next(
       new HttpError('Invalid inputs passed, please check your data.', 422)
     );
   }
 
-  const { name, type, zone, access, num_cards, description, price, owner_price, stadium_id, comision, user_id, imagesName } = req.body;
+  const {
+    name,
+    type,
+    zone,
+    access,
+    num_cards,
+    description,
+    price,
+    owner_price,
+    stadium_id,
+    comision,
+    user_id,
+    imagesName,
+  } = req.body;
   const palcoId = req.params.pid;
 
-  let images = []
-  if(req.files){
+  let images = [];
+  if (req.files) {
     let file = 0;
-    for(let i = 0; i<imagesName.length; i++){
-      if(imagesName[i]===''){
-        images.push(req.files[file].path)
+    for (let i = 0; i < imagesName.length; i++) {
+      if (imagesName[i] === '') {
+        images.push(req.files[file].location);
         file++;
-      }else{
-        images.push('public/images'+imagesName[i])
+      } else {
+        images.push(imagesName[i]);
       }
     }
   }
@@ -153,7 +188,7 @@ const updatePalco = async (req, res, next) => {
     return next(error);
   }
 
-  if(palco){
+  if (palco) {
     palco.name = name;
     palco.type = type;
     palco.zone = zone;
@@ -165,7 +200,7 @@ const updatePalco = async (req, res, next) => {
     palco.stadium_id = stadium_id;
     palco.comision = comision;
     palco.user_id = user_id;
-    palco.images=images;
+    palco.images = images;
     palco.modified_date = Date.now();
   }
 
@@ -215,7 +250,7 @@ const deletePalcoByStadiumId = async (req, res, next) => {
   try {
     await Palco.deleteMany({ stadium_id: stadiumId });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     const error = new HttpError(
       'Something went wrong, could not delete palco.',
       500

@@ -1,10 +1,10 @@
-require("dotenv").config();
-const AWS = require("aws-sdk");
-const hbs = require("nodemailer-express-handlebars");
-const nodemailer = require("nodemailer");
-const path = require("path");
-const handlebars = require("handlebars");
-const fs = require("fs");
+require('dotenv').config();
+const AWS = require('aws-sdk');
+const hbs = require('nodemailer-express-handlebars');
+const nodemailer = require('nodemailer');
+const path = require('path');
+const handlebars = require('handlebars');
+const fs = require('fs');
 
 const SESConfig = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -14,14 +14,14 @@ const SESConfig = {
 
 const sendEmail = async (req, res, next) => {
   const params = {
-    Source: "PalcosPlus <contacto@palcosplus.com>",
+    Source: 'PalcosPlus <contacto@palcosplus.com>',
     Destination: {
       ToAddresses: [req.body.destination],
     },
     Message: {
       Body: {
         Html: {
-          Charset: "UTF-8",
+          Charset: 'UTF-8',
           Data: "<p style='color: red'>Renta exitosa</p>",
         },
       },
@@ -32,11 +32,11 @@ const sendEmail = async (req, res, next) => {
     .promise()
     .then((response) => {
       console.log(response);
-      res.status(200).json({ message: "Email sent." });
+      res.status(200).json({ message: 'Email sent.' });
     })
     .catch((err) => {
       console.log(err);
-      res.status(404).json({ message: "Error" });
+      res.status(404).json({ message: 'Error' });
     });
 };
 
@@ -49,22 +49,22 @@ const nodemailerEmail = async (req, res, next) => {
 
   let transporter = nodemailer.createTransport({
     SES: new AWS.SES({
-      apiVersion: "2010-12-01",
+      apiVersion: '2010-12-01',
     }),
   });
 
   transporter.sendMail(
     {
       from: '"PalcosPlus" <contacto@palcosplus.com>',
-      to: "alej.mernu@gmail.com",
-      subject: "Felicidades por tu renta!",
-      text: "I hope this message gets sent!",
+      to: 'alej.mernu@gmail.com',
+      subject: 'Felicidades por tu renta!',
+      text: 'I hope this message gets sent!',
     },
     (err, info) => {
       console.log(info.envelope);
       console.log(info.messageId);
       console.log(err);
-      res.status(500).json({ message: "Error." });
+      res.status(500).json({ message: 'Error.' });
     }
   );
 
@@ -114,8 +114,8 @@ const nodemailerEmail = async (req, res, next) => {
 };
 
 const sendConfirmation = async (req, res, next) => {
-  const filePath = path.join(__dirname, "../mail/email.html");
-  const source = fs.readFileSync(filePath, "utf-8").toString();
+  const filePath = path.join(__dirname, '../mail/email.html');
+  const source = fs.readFileSync(filePath, 'utf-8').toString();
   const template = handlebars.compile(source);
 
   const {
@@ -145,14 +145,14 @@ const sendConfirmation = async (req, res, next) => {
 
   var delivery_name;
   switch (delivery_type) {
-    case "office":
-      delivery_name = "Recoger en oficinas";
+    case 'office':
+      delivery_name = 'Recoger en oficinas';
       break;
-    case "stadium":
-      delivery_name = "Recoger en el estadio";
+    case 'stadium':
+      delivery_name = 'Recoger en el estadio';
       break;
     default:
-      delivery_name = "Entrega a domicilio";
+      delivery_name = 'Entrega a domicilio';
   }
 
   const rent_id = order_id.substring(0, 5);
@@ -176,9 +176,9 @@ const sendConfirmation = async (req, res, next) => {
     stadium_delivery_zone: stadium_delivery_zone,
     price: price,
     subtotal: subtotal,
-    iva: iva,
-    shipping: shipping,
-    coupon: "ninguno",
+    // iva: iva,
+    shipping: shipping ? shipping : 0,
+    coupon: 'ninguno',
     discount: 0,
     total: total,
   };
@@ -192,26 +192,26 @@ const sendConfirmation = async (req, res, next) => {
 
   let transporter = nodemailer.createTransport({
     SES: new AWS.SES({
-      apiVersion: "2010-12-01",
+      apiVersion: '2010-12-01',
     }),
   });
 
   const mailOptions = {
     from: '"PalcosPlus" <contacto@palcosplus.com>',
     to: email,
-    subject: "Felicidades por tu renta!",
-    text: "",
+    subject: 'Felicidades por tu renta!',
+    text: '',
     html: htmlToSend,
   };
 
   const info = await transporter.sendMail(mailOptions).then(
     (response) => {
-      console.log("Message sent to user " + email + ": %s", response.messageId);
-      res.status(200).json({ message: "Email sent." });
+      console.log('Message sent to user ' + email + ': %s', response.messageId);
+      res.status(200).json({ message: 'Email sent.' });
     },
     (err) => {
-      console.log("error sending mail: " + err);
-      res.status(404).json({ message: "Error" });
+      console.log('error sending mail: ' + err);
+      res.status(404).json({ message: 'Error' });
     }
   );
 };
@@ -227,15 +227,15 @@ const sendQuestions = async (req, res, next) => {
 
   let transporter = nodemailer.createTransport({
     SES: new AWS.SES({
-      apiVersion: "2010-12-01",
+      apiVersion: '2010-12-01',
     }),
   });
 
   const mailOptions = {
     from: '"Preguntas" <contacto@palcosplus.com>',
-    to: "contacto@palcosplus.com",
-    subject: "Pregunta Usuario",
-    text: "",
+    to: 'alej.mernu@gmail.com',
+    subject: 'Pregunta Usuario',
+    text: '',
     html: `<h2>Datos del usuario</h2>
           <p><span style="font-weight:bold">Nombre:</span> ${name}</p>
           <p><span style="font-weight:bold">Teléfono:</span> ${phone}</p>
@@ -245,12 +245,12 @@ const sendQuestions = async (req, res, next) => {
 
   const info = await transporter.sendMail(mailOptions).then(
     (response) => {
-      console.log("Message sent: %s", response.messageId);
-      res.status(200).json({ message: "Email sent." });
+      console.log('Message sent: %s', response.messageId);
+      res.status(200).json({ message: 'Email sent.' });
     },
     (err) => {
-      console.log("error sending mail: " + err);
-      res.status(404).json({ message: "Error" });
+      console.log('error sending mail: ' + err);
+      res.status(404).json({ message: 'Error' });
     }
   );
 };
@@ -267,15 +267,15 @@ const sendApplication = async (req, res, next) => {
 
   let transporter = nodemailer.createTransport({
     SES: new AWS.SES({
-      apiVersion: "2010-12-01",
+      apiVersion: '2010-12-01',
     }),
   });
 
   const mailOptions = {
     from: '"Solicitud" <contacto@palcosplus.com>',
-    to: "contacto@palcosplus.com",
-    subject: "Solicitud de Usuario",
-    text: "",
+    to: 'alej.mernu@gmail.com',
+    subject: 'Solicitud de Usuario',
+    text: '',
     html: `<h2>Datos del usuario</h2>
           <p><span style="font-weight:bold">Tipo de solicitud:</span> ${application}</p>
           <p><span style="font-weight:bold">Nombre:</span> ${name}</p>
@@ -289,12 +289,12 @@ const sendApplication = async (req, res, next) => {
 
   const info = await transporter.sendMail(mailOptions).then(
     (response) => {
-      console.log("Message sent: %s", response.messageId);
-      res.status(200).json({ message: "Email sent." });
+      console.log('Message sent: %s', response.messageId);
+      res.status(200).json({ message: 'Email sent.' });
     },
     (err) => {
-      console.log("error sending mail: " + err);
-      res.status(404).json({ message: "Error" });
+      console.log('error sending mail: ' + err);
+      res.status(404).json({ message: 'Error' });
     }
   );
 };

@@ -1,7 +1,7 @@
-const { validationResult } = require("express-validator");
+const { validationResult } = require('express-validator');
 
-const HttpError = require("../models/http-error");
-const Events = require("../models/events");
+const HttpError = require('../models/http-error');
+const Events = require('../models/events');
 
 const getAllEvents = async (req, res, next) => {
   let events;
@@ -9,14 +9,14 @@ const getAllEvents = async (req, res, next) => {
     events = await Events.find();
   } catch (err) {
     const error = new HttpError(
-      "Something went wrong, could not find a event.",
+      'Something went wrong, could not find a event.',
       500
     );
     return next(error);
   }
 
   if (!events) {
-    const error = new HttpError("Does not exist events", 404);
+    const error = new HttpError('Does not exist events', 404);
     return next(error);
   }
 
@@ -35,7 +35,7 @@ const getEventById = async (req, res, next) => {
     event = await Events.findById(eventId);
   } catch (err) {
     const error = new HttpError(
-      "Something went wrong, could not find a event.",
+      'Something went wrong, could not find a event.',
       500
     );
     return next(error);
@@ -43,7 +43,7 @@ const getEventById = async (req, res, next) => {
 
   if (!event) {
     const error = new HttpError(
-      "Could not find a event for the provided id.",
+      'Could not find a event for the provided id.',
       404
     );
     return next(error);
@@ -60,7 +60,7 @@ const getEventByStadiumId = async (req, res, next) => {
     events = await Events.find({ stadium_id: stadiumId });
   } catch (err) {
     const error = new HttpError(
-      "Fetching palcos failed, please try again later",
+      'Fetching palcos failed, please try again later',
       500
     );
     return next(error);
@@ -68,9 +68,38 @@ const getEventByStadiumId = async (req, res, next) => {
 
   if (!events || events.length === 0) {
     return next(
-      new HttpError("Could not find events for the provided user id.", 404)
+      new HttpError('Could not find events for the provided user id.', 404)
     );
   }
+
+  res.json({
+    events: events.map((event) => event.toObject({ getters: true })),
+  });
+};
+
+const getNextEventsByStadiumId = async (req, res, next) => {
+  const stadiumId = req.params.pid;
+  const date = new Date().toISOString().split('T')[0].toString();
+
+  let events;
+  try {
+    events = await Events.find({
+      $and: [{ date: { $gt: date } }, { stadium_id: stadiumId }],
+    });
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching palcos failed, please try again later',
+      500
+    );
+    return next(error);
+  }
+
+  if (!events || events.length === 0) {
+    return next(
+      new HttpError('Could not find events for the provided user id.', 404)
+    );
+  }
+  events.sort((a, b) => a.date.localeCompare(b.date));
 
   res.json({
     events: events.map((event) => event.toObject({ getters: true })),
@@ -85,7 +114,7 @@ const getPrincipalEvents = async (req, res, next) => {
     events = await Events.find({ isImportant: true });
   } catch (err) {
     const error = new HttpError(
-      "Fetching palcos failed, please try again later",
+      'Fetching palcos failed, please try again later',
       500
     );
     return next(error);
@@ -93,7 +122,7 @@ const getPrincipalEvents = async (req, res, next) => {
 
   if (!events || events.length === 0) {
     return next(
-      new HttpError("Could not find events for the provided user id.", 404)
+      new HttpError('Could not find events for the provided user id.', 404)
     );
   }
 
@@ -106,7 +135,7 @@ const createEvent = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
-      new HttpError("Invalid inputs passed, please check your data.", 422)
+      new HttpError('Invalid inputs passed, please check your data.', 422)
     );
   }
 
@@ -155,7 +184,7 @@ const createEvent = async (req, res, next) => {
     });
   } catch (err) {
     const error = new HttpError(
-      "Creating event failed, please try again.",
+      'Creating event failed, please try again.',
       500
     );
     return next(error);
@@ -168,7 +197,7 @@ const updateEvent = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
-      new HttpError("Invalid inputs passed, please check your data.", 422)
+      new HttpError('Invalid inputs passed, please check your data.', 422)
     );
   }
 
@@ -193,7 +222,7 @@ const updateEvent = async (req, res, next) => {
     event = await Events.findById(eventId);
   } catch (err) {
     const error = new HttpError(
-      "Something went wrong, could not update event.",
+      'Something went wrong, could not update event.',
       500
     );
     return next(error);
@@ -219,7 +248,7 @@ const updateEvent = async (req, res, next) => {
     await event.save();
   } catch (err) {
     const error = new HttpError(
-      "Something went wrong, could not update event.",
+      'Something went wrong, could not update event.',
       500
     );
     return next(error);
@@ -236,7 +265,7 @@ const deleteEvent = async (req, res, next) => {
     event = await Events.findById(eventId);
   } catch (err) {
     const error = new HttpError(
-      "Something went wrong, could not delete event.",
+      'Something went wrong, could not delete event.',
       500
     );
     return next(error);
@@ -246,13 +275,13 @@ const deleteEvent = async (req, res, next) => {
     await event.remove();
   } catch (err) {
     const error = new HttpError(
-      "Something went wrong, could not delete event.",
+      'Something went wrong, could not delete event.',
       500
     );
     return next(error);
   }
 
-  res.status(200).json({ message: "Deleted event." });
+  res.status(200).json({ message: 'Deleted event.' });
 };
 
 const deleteEvenyByStadiumId = async (req, res, next) => {
@@ -263,13 +292,13 @@ const deleteEvenyByStadiumId = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     const error = new HttpError(
-      "Something went wrong, could not delete event.",
+      'Something went wrong, could not delete event.',
       500
     );
     return next(error);
   }
 
-  res.status(200).json({ message: "Deleted event." });
+  res.status(200).json({ message: 'Deleted event.' });
 };
 
 const deleteEvenyByTeamId = async (req, res, next) => {
@@ -280,13 +309,13 @@ const deleteEvenyByTeamId = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     const error = new HttpError(
-      "Something went wrong, could not delete event.",
+      'Something went wrong, could not delete event.',
       500
     );
     return next(error);
   }
 
-  res.status(200).json({ message: "Deleted event." });
+  res.status(200).json({ message: 'Deleted event.' });
 };
 
 const deleteEvenyByCompetitionId = async (req, res, next) => {
@@ -297,16 +326,17 @@ const deleteEvenyByCompetitionId = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     const error = new HttpError(
-      "Something went wrong, could not delete event.",
+      'Something went wrong, could not delete event.',
       500
     );
     return next(error);
   }
 
-  res.status(200).json({ message: "Deleted event." });
+  res.status(200).json({ message: 'Deleted event.' });
 };
 
 exports.getAllEvents = getAllEvents;
+exports.getNextEventsByStadiumId = getNextEventsByStadiumId;
 exports.getEventById = getEventById;
 exports.getEventByStadiumId = getEventByStadiumId;
 exports.getPrincipalEvents = getPrincipalEvents;

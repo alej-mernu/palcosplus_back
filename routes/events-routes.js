@@ -10,31 +10,21 @@ router.get('/', eventsControllers.getAllEvents);
 router.get('/:id', eventsControllers.getEventById);
 router.get('/stadium/:pid', eventsControllers.getEventByStadiumId);
 router.get('/principal/:pid', eventsControllers.getPrincipalEvents);
+router.get(
+  '/nextEvents/stadium/:pid',
+  eventsControllers.getNextEventsByStadiumId
+);
 
 router.post(
   '/',
   fileUpload.array('images'),
-  [
-    check('date')
-      .not()
-      .isEmpty(),
-    check('stadium_id')
-      .not()
-      .isEmpty(),
-  ],
+  [check('date').not().isEmpty(), check('stadium_id').not().isEmpty()],
   eventsControllers.createEvent
 );
 
 router.patch(
   '/:pid',
-  [
-    check('date')
-      .not()
-      .isEmpty(),
-    check('stadium_id')
-      .not()
-      .isEmpty(),
-  ],
+  [check('date').not().isEmpty(), check('stadium_id').not().isEmpty()],
   eventsControllers.updateEvent
 );
 

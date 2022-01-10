@@ -1,6 +1,6 @@
 const { validationResult } = require('express-validator');
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const HttpError = require('../models/http-error');
 const Rent = require('../models/rents');
@@ -17,13 +17,13 @@ const getRents = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({ rents: rents.map(rent => rent.toObject({ getters: true })) });
+  res.json({ rents: rents.map((rent) => rent.toObject({ getters: true })) });
 };
 
 const getActiveRents = async (req, res, next) => {
   let rents;
   try {
-    rents = await Rent.find({active: true});
+    rents = await Rent.find({ active: true });
   } catch (err) {
     const error = new HttpError(
       'Fetching rents failed, please try again later.',
@@ -31,7 +31,7 @@ const getActiveRents = async (req, res, next) => {
     );
     return next(error);
   }
-  res.json({ rents: rents.map(rent => rent.toObject({ getters: true })) });
+  res.json({ rents: rents.map((rent) => rent.toObject({ getters: true })) });
 };
 
 const getRentsId = async (req, res, next) => {
@@ -67,10 +67,47 @@ const createRent = async (req, res, next) => {
     );
   }
 
-  const { name, last_name, email, tel, alias, country, state, city, suburb, postal_code, address, interior_num, palco_id, event_id } = req.body;
+  const {
+    name,
+    last_name,
+    email,
+    tel,
+    alias,
+    country,
+    state,
+    city,
+    suburb,
+    postal_code,
+    address,
+    interior_num,
+    palco_id,
+    event_id,
+    total,
+    subtotal,
+    comision,
+    shipping,
+  } = req.body;
 
   const createdRent = new Rent({
-    name, last_name, email, tel, alias, country, state, city, suburb, postal_code, address, interior_num, palco_id, event_id, active: true
+    name,
+    last_name,
+    email,
+    tel,
+    alias,
+    country,
+    state,
+    city,
+    suburb,
+    postal_code,
+    address,
+    interior_num,
+    palco_id,
+    event_id,
+    total,
+    subtotal,
+    comision,
+    shipping,
+    active: true,
   });
 
   try {
@@ -80,10 +117,7 @@ const createRent = async (req, res, next) => {
       }
     });
   } catch (err) {
-    const error = new HttpError(
-      'Creating rent failed, please try again.',
-      500
-    );
+    const error = new HttpError('Creating rent failed, please try again.', 500);
     return next(error);
   }
 
@@ -98,7 +132,7 @@ const updateRent = async (req, res, next) => {
     );
   }
 
-  const { active } = req.body
+  const { active } = req.body;
 
   const rentId = req.params.id;
 
@@ -119,7 +153,7 @@ const updateRent = async (req, res, next) => {
   try {
     await rent.save();
   } catch (err) {
-    console.log(err)
+    console.log(err);
     const error = new HttpError(
       'Something went wrong, could not update team.',
       500
@@ -136,7 +170,7 @@ const deleteRentByPalcoId = async (req, res, next) => {
   try {
     await Rent.deleteMany({ palco_id: palcoId });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     const error = new HttpError(
       'Something went wrong, could not delete rent.',
       500
@@ -153,7 +187,7 @@ const deleteRentByEventId = async (req, res, next) => {
   try {
     await Rent.deleteMany({ event_id: eventId });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     const error = new HttpError(
       'Something went wrong, could not delete rent.',
       500
