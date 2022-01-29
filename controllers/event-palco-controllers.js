@@ -15,7 +15,7 @@ const getAllEventPalco = async (req, res, next) => {
     return next(error);
   }
 
-  if (!relation) {
+  if (!relation || relation.length === 0) {
     const error = new HttpError('Does not exist the relation event palco', 404);
     return next(error);
   }
@@ -37,11 +37,18 @@ const getEventPalcoByIds = async (req, res, next) => {
       $and: [{ event_id: eventId }, { palco_id: palcoId }],
     });
   } catch (err) {
+    console.log(err);
     const error = new HttpError(
       'Something went wrong, could not find a relation event palco.',
       500
     );
     return next(error);
+  }
+
+  if (!relation || relation.length === 0) {
+    return next(
+      new HttpError('Could not find relation for the provided ids.', 404)
+    );
   }
 
   res.json({ relation: relation.toObject({ getters: true }) });
