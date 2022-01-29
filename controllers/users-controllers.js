@@ -1,6 +1,6 @@
 const { validationResult } = require('express-validator');
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
@@ -16,7 +16,7 @@ const getUsers = async (req, res, next) => {
     );
     return next(error);
   }
-  res.json({ users: users.map(user => user.toObject({ getters: true })) });
+  res.json({ users: users.map((user) => user.toObject({ getters: true })) });
 };
 
 const getUserById = async (req, res, next) => {
@@ -48,28 +48,45 @@ const getUserById = async (req, res, next) => {
 const signup = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log(errors)
+    console.log(errors);
     return next(
       new HttpError('Invalid inputs passed, please check your data.', 422)
     );
   }
 
-  const { name, last_name, email, tel, date_birth, password, role, origin, alias, country, state, city, suburb, postal_code, address, interior_num } = req.body;
+  const {
+    name,
+    last_name,
+    email,
+    tel,
+    date_birth,
+    password,
+    role,
+    origin,
+    alias,
+    country,
+    state,
+    city,
+    suburb,
+    postal_code,
+    address,
+    interior_num,
+  } = req.body;
 
-  let image=''
+  let image = '';
   if (req.body.imageUrl) {
     image = req.body.imageUrl;
   } else if (req.file) {
     if (req.file.path) {
-     image = req.file.path;
+      image = req.file.path;
     }
   }
 
-  let existingUser
+  let existingUser;
   try {
-    existingUser = await User.findOne({ email: email })
+    existingUser = await User.findOne({ email: email });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     const error = new HttpError(
       'Signing up failed, please try again later.',
       500
@@ -78,55 +95,116 @@ const signup = async (req, res, next) => {
   }
 
   if (existingUser) {
-    const error = new HttpError(
-      'User exists already, please login instead.',
-      422
-    );
-    console.log(error);
-    return next(error);
+    let isValidPassword = false;
+    try {
+      isValidPassword = await bcrypt.compare(password, existingUser.password);
+    } catch {
+      const error = new HttpError(
+        'Invalid credentials, could not log you in. Please check your credentials',
+        401
+      );
+      console.log(error);
+      return next(error);
+    }
+
+    if (!isValidPassword) {
+      const error = new HttpError(
+        'Invalid pasword, could not log you in.',
+        401
+      );
+      console.log(error);
+      return next(error);
+    }
+
+    let token;
+    try {
+      token = jwt.sign(
+        { userId: existingUser.id },
+        'palcosplusencrypttokenkey',
+        {
+          expiresIn: '2h',
+        }
+      );
+    } catch {
+      const error = new HttpError('Login failed, please try again.', 500);
+      console.log(error);
+      return next(error);
+    }
+
+    res.json({
+      userId: existingUser.id,
+      email: existingUser.email,
+      role: existingUser.role,
+      token: token,
+    });
+    // const error = new HttpError(
+    //   'User exists already, please login instead.',
+    //   422
+    // );
+    // console.log(error);
+    // return next(error);
+  } else {
+    let hashPassword;
+    try {
+      hashPassword = await bcrypt.hash(password, 12);
+    } catch {
+      const error = new HttpError(
+        'Could not create user, please try again.',
+        422
+      );
+      console.log(error);
+      return next(error);
+    }
+
+    const createdUser = new User({
+      name,
+      last_name,
+      email,
+      tel,
+      date_birth,
+      password: hashPassword,
+      image,
+      role,
+      origin,
+      alias,
+      country,
+      state,
+      city,
+      suburb,
+      postal_code,
+      address,
+      interior_num,
+      image: image,
+    });
+
+    try {
+      await createdUser.save();
+    } catch (err) {
+      console.log(err);
+      const error = new HttpError('Signing up failed, please try again.', 500);
+      console.log(error);
+      return next(error);
+    }
+
+    let token;
+    try {
+      token = jwt.sign(
+        { userId: createdUser.id },
+        'palcosplusencrypttokenkey',
+        {
+          expiresIn: '4h',
+        }
+      );
+    } catch {
+      const error = new HttpError('Signing up failed, please try again.', 500);
+      console.log(error);
+      return next(error);
+    }
+
+    res
+      .status(201)
+      .json({ userId: createdUser.id, email: createdUser.email, token: token });
   }
-
-  let hashPassword;
-  try {
-    hashPassword = await bcrypt.hash(password, 12);
-  } catch {
-    const error = new HttpError(
-      'Could not create user, please try again.',
-      422
-    );
-    console.log(error);
-    return next(error);
-  }
-
-  const createdUser = new User({
-    name, last_name, email, tel, date_birth, password: hashPassword, image, role, origin, alias, country, state, city, suburb, postal_code, address, interior_num, image: image
-  });
-
-  try {
-    await createdUser.save();
-  } catch (err) {
-    console.log(err)
-    const error = new HttpError(
-      'Signing up failed, please try again.',
-      500
-    );
-    console.log(error);
-    return next(error);
-  }
-
-  let token
-  try {
-    token = jwt.sign({ userId: createdUser.id }, "palcosplusencrypttokenkey", { expiresIn: '4h' })
-  } catch {
-    const error = new HttpError(
-      'Signing up failed, please try again.',
-      500
-    );
-    console.log(error);
-    return next(error);
-  }
-
-  res.status(201).json({ userId: createdUser.id, email: createdUser.email, token: token });
 };
 
 const login = async (req, res, next) => {
@@ -135,7 +213,7 @@ const login = async (req, res, next) => {
   let existingUser;
 
   try {
-    existingUser = await User.findOne({ email: email })
+    existingUser = await User.findOne({ email: email });
   } catch (err) {
     const error = new HttpError(
       'Logging in failed, please try again later.',
@@ -156,7 +234,7 @@ const login = async (req, res, next) => {
 
   let isValidPassword = false;
   try {
-    isValidPassword = await bcrypt.compare(password, existingUser.password)
+    isValidPassword = await bcrypt.compare(password, existingUser.password);
   } catch {
     const error = new HttpError(
       'Invalid credentials, could not log you in. Please check your credentials',
@@ -167,57 +245,71 @@ const login = async (req, res, next) => {
   }
 
   if (!isValidPassword) {
-    const error = new HttpError(
-      'Invalid pasword, could not log you in.',
-      401
-    );
+    const error = new HttpError('Invalid pasword, could not log you in.', 401);
     console.log(error);
     return next(error);
   }
 
-  let token
+  let token;
   try {
-    token = jwt.sign({ userId: existingUser.id }, "palcosplusencrypttokenkey", { expiresIn: '2h' })
+    token = jwt.sign({ userId: existingUser.id }, 'palcosplusencrypttokenkey', {
+      expiresIn: '2h',
+    });
   } catch {
-    const error = new HttpError(
-      'Login failed, please try again.',
-      500
-    );
+    const error = new HttpError('Login failed, please try again.', 500);
     console.log(error);
     return next(error);
   }
-  
+
   res.json({
     userId: existingUser.id,
     email: existingUser.email,
     role: existingUser.role,
-    token: token
+    token: token,
   });
 };
 
 const updateUser = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log(errors)
+    console.log(errors);
     return next(
       new HttpError('Invalid inputs passed, please check your data.', 422)
     );
   }
 
-  const { name, last_name, new_email, email, tel, date_birth, password, role, origin, alias, country, state, city, suburb, postal_code, address, interior_num } = req.body;
+  const {
+    name,
+    last_name,
+    new_email,
+    email,
+    tel,
+    date_birth,
+    password,
+    role,
+    origin,
+    alias,
+    country,
+    state,
+    city,
+    suburb,
+    postal_code,
+    address,
+    interior_num,
+  } = req.body;
 
-  let image
+  let image;
   if (req.body.imageUrl) {
     image = req.body.imageUrl;
   } else if (req.file) {
     if (req.file.path) {
-     image = req.file.path;
+      image = req.file.path;
     }
   }
 
-  let existingUser
+  let existingUser;
   try {
-    existingUser = await User.findOne({ email: email })
+    existingUser = await User.findOne({ email: email });
   } catch (err) {
     const error = new HttpError(
       'Signing up failed, please try again later.',
@@ -227,35 +319,32 @@ const updateUser = async (req, res, next) => {
     return next(error);
   }
 
-  if(existingUser){
+  if (existingUser) {
     existingUser.name = name;
-    existingUser.last_name=last_name;
-    existingUser.email=new_email;
-    existingUser.tel=tel;
-    existingUser.date_birth=date_birth;
-    existingUser.alias=alias;
-    existingUser.country=country;
-    existingUser.state=state;
-    existingUser.city=city;
-    existingUser.suburb=suburb;
-    existingUser.postal_code=postal_code;
-    existingUser.address=address;
-    existingUser.interior_num=interior_num;
-    if(image){
-      existingUser.image=image;
+    existingUser.last_name = last_name;
+    existingUser.email = new_email;
+    existingUser.tel = tel;
+    existingUser.date_birth = date_birth;
+    existingUser.alias = alias;
+    existingUser.country = country;
+    existingUser.state = state;
+    existingUser.city = city;
+    existingUser.suburb = suburb;
+    existingUser.postal_code = postal_code;
+    existingUser.address = address;
+    existingUser.interior_num = interior_num;
+    if (image) {
+      existingUser.image = image;
     }
-  }else{
-    const error = new HttpError(
-      'Could not find a user for the email.',
-      404
-    );
+  } else {
+    const error = new HttpError('Could not find a user for the email.', 404);
     return next(error);
   }
 
   try {
     await existingUser.save();
   } catch (err) {
-    console.log('error')
+    console.log('error');
     const error = new HttpError(
       'Something went wrong, could not update the user.',
       500
@@ -264,19 +353,20 @@ const updateUser = async (req, res, next) => {
     return next(error);
   }
 
-  let token
+  let token;
   try {
-    token = jwt.sign({ userId: existingUser.id }, "palcosplusencrypttokenkey", { expiresIn: '2h' })
+    token = jwt.sign({ userId: existingUser.id }, 'palcosplusencrypttokenkey', {
+      expiresIn: '2h',
+    });
   } catch {
-    const error = new HttpError(
-      'Signing up failed, please try again.',
-      500
-    );
+    const error = new HttpError('Signing up failed, please try again.', 500);
     console.log(error);
     return next(error);
   }
 
-  res.status(201).json({ userId: existingUser.id, email: existingUser.email, token: token });
+  res
+    .status(201)
+    .json({ userId: existingUser.id, email: existingUser.email, token: token });
 };
 
 exports.getUserById = getUserById;
