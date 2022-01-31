@@ -13,22 +13,14 @@ router.get('/stadium/:pid', palcosControllers.getPalcoByStadiumId);
 router.post(
   '/',
   fileUpload.array('images'),
-  [
-    check('name')
-      .not()
-      .isEmpty(),
-  ],
+  [check('name').not().isEmpty()],
   palcosControllers.createPalco
 );
 
 router.patch(
   '/:pid',
   fileUpload.array('images'),
-  [
-    check('name')
-      .not()
-      .isEmpty(),
-  ],
+  [check('name').not().isEmpty()],
   palcosControllers.updatePalco
 );
 
