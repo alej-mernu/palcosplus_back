@@ -152,6 +152,7 @@ const createEvent = async (req, res, next) => {
     competition_id,
     stadium_id,
     isImportant,
+    active,
   } = req.body;
   let images = [];
   if (req.files) {
@@ -174,6 +175,7 @@ const createEvent = async (req, res, next) => {
     stadium_id,
     images,
     isImportant,
+    active,
   });
 
   try {
@@ -214,6 +216,7 @@ const updateEvent = async (req, res, next) => {
     competition_id,
     stadium_id,
     isImportant,
+    active,
   } = req.body;
   const eventId = req.params.pid;
 
@@ -241,6 +244,7 @@ const updateEvent = async (req, res, next) => {
     event.competition_id = competition_id;
     event.stadium_id = stadium_id;
     event.isImportant = isImportant;
+    event.active = active;
     event.modified_date = Date.now();
   }
 

@@ -16,7 +16,36 @@ const getUsers = async (req, res, next) => {
     );
     return next(error);
   }
-  res.json({ users: users.map((user) => user.toObject({ getters: true })) });
+
+  users.forEach((data, idx) => {
+    users[idx] = data.toObject({ getters: true });
+  });
+
+  res.json({ users: users });
+};
+
+const getAllUsers = async (req, res, next) => {
+  let users;
+  try {
+    users = await User.find();
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not find a user.',
+      500
+    );
+    return next(error);
+  }
+
+  if (!users) {
+    const error = new HttpError('Does not exist User', 404);
+    return next(error);
+  }
+
+  users.forEach((data, idx) => {
+    users[idx] = data.toObject({ getters: true });
+  });
+
+  res.json({ users: users });
 };
 
 const getUserById = async (req, res, next) => {
@@ -369,8 +398,37 @@ const updateUser = async (req, res, next) => {
     .json({ userId: existingUser.id, email: existingUser.email, token: token });
 };
 
+const deleteUser = async (req, res, next) => {
+  const userId = req.params.uid;
+
+  let user;
+  try {
+    user = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not delete user.',
+      500
+    );
+    return next(error);
+  }
+
+  try {
+    await user.remove();
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not delete user.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ message: 'Deleted user.' });
+};
+
 exports.getUserById = getUserById;
 exports.getUsers = getUsers;
+exports.getAllUsers = getAllUsers;
 exports.signup = signup;
 exports.login = login;
 exports.updateUser = updateUser;
+exports.deleteUser = deleteUser;

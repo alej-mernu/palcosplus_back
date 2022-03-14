@@ -216,6 +216,70 @@ const sendConfirmation = async (req, res, next) => {
   );
 };
 
+const sendConfirmationToAdmin = async (req, res, next) => {
+  const {
+    name,
+    email,
+    order_id,
+    event_name,
+    event_tour_name,
+    competition,
+    prop_name,
+    zone,
+    access,
+    num_cards,
+    stadium_name,
+    date,
+    time,
+    total,
+  } = req.body;
+
+  AWS.config.update({
+    accessKeyId: SESConfig.accessKeyId,
+    secretAccessKey: SESConfig.secretAccessKey,
+    region: SESConfig.region,
+  });
+
+  let transporter = nodemailer.createTransport({
+    SES: new AWS.SES({
+      apiVersion: '2010-12-01',
+    }),
+  });
+
+  const mailOptions = {
+    from: '"PalcosPlus" <contacto@palcosplus.com>',
+    to: ['contacto@palcosplus.com', 'palcosplus@gmail.com'],
+    subject: 'Renta de Palco',
+    text: '',
+    html: `<h2>Datos del usuario</h2>
+          <p><span style="font-weight:bold">Nombre:</span> ${name}</p>
+          <p><span style="font-weight:bold">Correo electrónico:</span> ${email}</p>
+          <p><span style="font-weight:bold">Id de la compra:</span>${order_id}</p>
+          <p><span style="font-weight:bold">Nombre del evento:</span>${event_name}</p>
+          <p><span style="font-weight:bold">Nombre del tour:</span>${event_tour_name}</p>
+          <p><span style="font-weight:bold">Competición:</span>${competition}</p>
+          <p><span style="font-weight:bold">Propiedad:</span>${prop_name}</p>
+          <p><span style="font-weight:bold">Zona:</span>${zone}</p>
+          <p><span style="font-weight:bold">Acceso:</span>${access}</p>
+          <p><span style="font-weight:bold">Numero de Tarjetas:</span>${num_cards}</p>
+          <p><span style="font-weight:bold">Estadio:</span>${stadium_name}</p>
+          <p><span style="font-weight:bold">Fecha:</span>${date}</p>
+          <p><span style="font-weight:bold">Hora:</span>${time}</p>
+          <p><span style="font-weight:bold">Total:</span>$${total}</p>`,
+  };
+
+  const info = await transporter.sendMail(mailOptions).then(
+    (response) => {
+      console.log('Message sent: %s', response.messageId);
+      res.status(200).json({ message: 'Email sent.' });
+    },
+    (err) => {
+      console.log('error sending mail: ' + err);
+      res.status(404).json({ message: 'Error' });
+    }
+  );
+};
+
 const sendQuestions = async (req, res, next) => {
   const { name, phone, email, message } = req.body;
 
@@ -302,5 +366,6 @@ const sendApplication = async (req, res, next) => {
 exports.sendEmail = sendEmail;
 exports.nodemailerEmail = nodemailerEmail;
 exports.sendConfirmation = sendConfirmation;
+exports.sendConfirmationToAdmin = sendConfirmationToAdmin;
 exports.sendQuestions = sendQuestions;
 exports.sendApplication = sendApplication;

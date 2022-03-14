@@ -7,6 +7,7 @@ const fileUpload = require('../middleware/file-upload');
 const router = express.Router();
 
 router.get('/', usersController.getUsers);
+router.get('/allUsers', usersController.getAllUsers);
 router.get('/:pid', usersController.getUserById);
 
 router.post(
@@ -18,5 +19,6 @@ router.post(
 
 router.post('/login', usersController.login);
 router.patch('/update', fileUpload.single('image'), usersController.updateUser);
+router.delete('/:uid', usersController.deleteUser);
 
 module.exports = router;

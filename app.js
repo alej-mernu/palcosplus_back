@@ -17,6 +17,7 @@ const tarifasRoutes = require('./routes/tarifas-routes');
 const rentsRoutes = require('./routes/rents-routes');
 const emailsRoutes = require('./routes/emails-routes');
 const eventPalcoRoutes = require('./routes/event-palco-routes');
+const manualsRoutes = require('./routes/manual-routes');
 const HttpError = require('./models/http-error');
 
 const app = express();
@@ -52,6 +53,7 @@ app.use('/tarifas', tarifasRoutes);
 app.use('/rents', rentsRoutes);
 app.use('/sendEmail', emailsRoutes);
 app.use('/eventPalco', eventPalcoRoutes);
+app.use('/manual', manualsRoutes);
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route.', 404);
