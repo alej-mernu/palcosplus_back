@@ -98,6 +98,7 @@ const createPalco = async (req, res, next) => {
     comision,
     user_id,
     isImportant,
+    active,
   } = req.body;
   let images = [];
 
@@ -118,7 +119,7 @@ const createPalco = async (req, res, next) => {
     owner_price,
     stadium_id,
     comision,
-    active: true,
+    active,
     user_id,
     isImportant,
     images,
@@ -163,6 +164,7 @@ const updatePalco = async (req, res, next) => {
     comision,
     user_id,
     isImportant,
+    active,
     imagesName,
   } = req.body;
   const palcoId = req.params.pid;
@@ -204,6 +206,7 @@ const updatePalco = async (req, res, next) => {
     palco.comision = comision;
     palco.user_id = user_id;
     palco.isImportant = isImportant;
+    palco.active = active;
     palco.images = images;
     palco.modified_date = Date.now();
   }
