@@ -238,11 +238,13 @@ const signup = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   const { email, password } = req.body;
-
+  console.log(req.body);
   let existingUser;
 
   try {
     existingUser = await User.findOne({ email: email });
+    console.log('existingUser');
+    console.log(existingUser);
   } catch (err) {
     const error = new HttpError(
       'Logging in failed, please try again later.',
