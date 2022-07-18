@@ -9,10 +9,8 @@ router.get('/', tarifasControllers.getAllTarifas);
 router.get('/:zip', tarifasControllers.getTarifaByPostalCode);
 router.get('/stadium/:id', tarifasControllers.getTarifaByStadiumId);
 
-router.post('/', tarifasControllers.createTarifa
-);
+router.post('/', tarifasControllers.createTarifa);
 
 router.delete('/:id', tarifasControllers.deleteTarifaByStadiumId);
-
 
 module.exports = router;

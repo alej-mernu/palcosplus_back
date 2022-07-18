@@ -30,11 +30,21 @@ const getAllTarifas = async (req, res, next) => {
 const getTarifaByPostalCode = async (req, res, next) => {
   const postal_code = req.params.zip;
 
-  let tarifas;
+  let price = '';
   try {
-    tarifas = await Tarifas.find({
+    const tarifas = await Tarifas.find({
       'tarifas.postalCode': { $regex: postal_code },
     });
+    if (tarifas.length > 0) {
+      const tariff = tarifas[0].tarifas;
+      for (let i = 0; tariff.length > i; i++) {
+        const codes = tariff[i].postalCode.split(',');
+        const found = codes.find((code) => code === postal_code);
+        if (found) {
+          price = tariff[i].tarifa;
+        }
+      }
+    }
   } catch (err) {
     const error = new HttpError(
       'Fetching tarifas failed, please try again later',
@@ -44,13 +54,8 @@ const getTarifaByPostalCode = async (req, res, next) => {
     return next(error);
   }
 
-  if (!tarifas || tarifas.length === 0) {
-    res.json({ tarifas: '' });
-    return;
-  }
-
   res.json({
-    tarifas: tarifas.map((tarifa) => tarifa.toObject({ getters: true })),
+    price: price,
   });
 };
 

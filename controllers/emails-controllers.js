@@ -176,7 +176,7 @@ const sendConfirmation = async (req, res, next) => {
     stadium_delivery_zone: stadium_delivery_zone,
     price: price,
     subtotal: subtotal,
-    // iva: iva,
+    iva: iva,
     shipping: shipping ? shipping : 0,
     coupon: 'ninguno',
     discount: 0,
@@ -231,6 +231,9 @@ const sendConfirmationToAdmin = async (req, res, next) => {
     stadium_name,
     date,
     time,
+    subtotal,
+    iva,
+    shipping,
     total,
   } = req.body;
 
@@ -265,6 +268,11 @@ const sendConfirmationToAdmin = async (req, res, next) => {
           <p><span style="font-weight:bold">Estadio:</span>${stadium_name}</p>
           <p><span style="font-weight:bold">Fecha:</span>${date}</p>
           <p><span style="font-weight:bold">Hora:</span>${time}</p>
+          <p><span style="font-weight:bold">Subtotal:</span>$${subtotal}</p>
+          <p><span style="font-weight:bold">IVA:</span>$${iva}</p>
+          <p><span style="font-weight:bold">Envío:</span>$${
+            shipping ? shipping : 0
+          }</p>
           <p><span style="font-weight:bold">Total:</span>$${total}</p>`,
   };
 

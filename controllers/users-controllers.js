@@ -237,14 +237,11 @@ const signup = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  const { email, password } = req.body;
-  console.log(req.body);
+  const { email, password, origin } = req.body;
   let existingUser;
 
   try {
     existingUser = await User.findOne({ email: email });
-    console.log('existingUser');
-    console.log(existingUser);
   } catch (err) {
     const error = new HttpError(
       'Logging in failed, please try again later.',
@@ -263,22 +260,27 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  let isValidPassword = false;
-  try {
-    isValidPassword = await bcrypt.compare(password, existingUser.password);
-  } catch {
-    const error = new HttpError(
-      'Invalid credentials, could not log you in. Please check your credentials',
-      401
-    );
-    console.log(error);
-    return next(error);
-  }
+  if (origin != 'facebook' && origin != 'google') {
+    let isValidPassword = false;
+    try {
+      isValidPassword = await bcrypt.compare(password, existingUser.password);
+    } catch {
+      const error = new HttpError(
+        'Invalid credentials, could not log you in. Please check your credentials',
+        401
+      );
+      console.log(error);
+      return next(error);
+    }
 
-  if (!isValidPassword) {
-    const error = new HttpError('Invalid pasword, could not log you in.', 401);
-    console.log(error);
-    return next(error);
+    if (!isValidPassword) {
+      const error = new HttpError(
+        'Invalid pasword, could not log you in.',
+        401
+      );
+      console.log(error);
+      return next(error);
+    }
   }
 
   let token;
