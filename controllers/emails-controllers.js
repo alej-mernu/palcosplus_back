@@ -147,6 +147,8 @@ const sendConfirmation = async (req, res, next) => {
   switch (delivery_type) {
     case 'office':
       delivery_name = 'Recoger en oficinas';
+      delivery_address =
+        'Mariano Otero 1917 int. 3-D. Residencial victoria, Zapopan. C.P. 45089.';
       break;
     case 'stadium':
       delivery_name = 'Recoger en el estadio';
