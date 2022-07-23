@@ -55,7 +55,7 @@ const getUserById = async (req, res, next) => {
   try {
     user = await User.findById(userId);
   } catch (err) {
-    // console.log(err)
+    console.log(err);
     const error = new HttpError(
       'Something went wrong, could not find a user.',
       500
@@ -106,8 +106,8 @@ const signup = async (req, res, next) => {
   if (req.body.imageUrl) {
     image = req.body.imageUrl;
   } else if (req.file) {
-    if (req.file.path) {
-      image = req.file.path;
+    if (req.file.location) {
+      image = req.file.location;
     }
   }
 
@@ -211,7 +211,6 @@ const signup = async (req, res, next) => {
     } catch (err) {
       console.log(err);
       const error = new HttpError('Signing up failed, please try again.', 500);
-      console.log(error);
       return next(error);
     }
 
@@ -377,12 +376,11 @@ const updateUser = async (req, res, next) => {
   try {
     await existingUser.save();
   } catch (err) {
-    console.log('error');
+    console.log(err);
     const error = new HttpError(
       'Something went wrong, could not update the user.',
       500
     );
-    console.log(error);
     return next(error);
   }
 
