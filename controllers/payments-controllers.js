@@ -1,4 +1,5 @@
 require('dotenv').config();
+const rentsControllers = require('./rents-controllers');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const ErrorCatcher = ({ decline_code, code }) => {
@@ -66,20 +67,38 @@ const paymentMethod = async (number, exp_month, exp_year, cvc) => {
 
 const paymentCheckout = async (req, res) => {
   try {
-    const { number, exp_month, exp_year, cvc, amount, description } = req.body;
+    const {
+      stadium_id,
+      palco_id,
+      event_id,
+      number,
+      exp_month,
+      exp_year,
+      cvc,
+      amount,
+      description,
+    } = req.body;
+    const isValid = await rentsControllers.validateRent(
+      stadium_id,
+      event_id,
+      palco_id
+    );
+    if (isValid) {
+      const card = await paymentMethod(number, exp_month, exp_year, cvc);
 
-    const card = await paymentMethod(number, exp_month, exp_year, cvc);
+      const totalAmount = amount * 100;
 
-    const totalAmount = amount * 100;
-
-    const payment = await stripe.paymentIntents.create({
-      amount: totalAmount,
-      currency: 'mxn',
-      description: description,
-      payment_method: card,
-      confirm: true,
-    });
-    res.status(200).send(payment.id);
+      const payment = await stripe.paymentIntents.create({
+        amount: totalAmount,
+        currency: 'mxn',
+        description: description,
+        payment_method: card,
+        confirm: true,
+      });
+      res.status(200).send(payment.id);
+    } else {
+      res.status(500).send();
+    }
   } catch (error) {
     const e = ErrorCatcher(error.raw);
     console.log(error);

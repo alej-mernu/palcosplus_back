@@ -12,8 +12,13 @@ const rentSchema = new Schema({
   subtotal: { type: Number },
   comision: { type: Number },
   shipping: { type: Number },
+  stadium_id: { type: String },
   palco_id: { type: String },
   event_id: { type: String },
+  stadium_name: { type: String },
+  palco_name: { type: String },
+  event_name: { type: String },
+  event_date: { type: String },
   active: { type: Boolean },
   //address
   alias: { type: String },

@@ -80,8 +80,13 @@ const createRent = async (req, res, next) => {
     postal_code,
     address,
     interior_num,
+    stadium_id,
     palco_id,
     event_id,
+    stadium_name,
+    palco_name,
+    event_name,
+    event_date,
     total,
     subtotal,
     comision,
@@ -101,8 +106,13 @@ const createRent = async (req, res, next) => {
     postal_code,
     address,
     interior_num,
+    stadium_id,
     palco_id,
     event_id,
+    stadium_name,
+    palco_name,
+    event_name,
+    event_date,
     total,
     subtotal,
     comision,
@@ -198,6 +208,26 @@ const deleteRentByEventId = async (req, res, next) => {
   res.status(200).json({ message: 'Deleted rent.' });
 };
 
+const validateRent = async (stadiumId, eventId, palcoId) => {
+  let rent;
+  try {
+    rent = await Rent.find({
+      stadium_id: stadiumId,
+      event_id: eventId,
+      palco_id: palcoId,
+    });
+  } catch (err) {
+    console.log(err);
+    throw new Error('Something went wrong, could not find a rent.');
+  }
+
+  if (rent.length === 0) {
+    return true;
+  }
+
+  return false;
+};
+
 exports.getRents = getRents;
 exports.getActiveRents = getActiveRents;
 exports.getRentsId = getRentsId;
@@ -205,3 +235,4 @@ exports.createRent = createRent;
 exports.updateRent = updateRent;
 exports.deleteRentByPalcoId = deleteRentByPalcoId;
 exports.deleteRentByEventId = deleteRentByEventId;
+exports.validateRent = validateRent;
