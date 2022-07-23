@@ -11,8 +11,8 @@ const MIME_TYPE_MAP = {
 
 const bucketName = process.env.AWS_BUCKET_NAME;
 const region = process.env.AWS_BUCKET_REGION;
-const accessKeyId = process.env.AWS_BUCKET_ACCESS_KEY;
-const secretAccessKey = process.env.AWS_BUCKET_SECRET_ACCESS_KEY;
+const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
 const s3 = new AWS.S3({
   region,
@@ -20,23 +20,26 @@ const s3 = new AWS.S3({
   secretAccessKey,
 });
 
-var fileUpload = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: bucketName,
-    metadata: function (req, file, cb) {
-      cb(null, { fieldName: file.fieldname });
-    },
-    key: function (req, file, cb) {
-      cb(null, file.originalname);
-    },
-  }),
-  limits: { fileSize: 1024 * 1024 * 50 }, // 50MB
-  fileFilter: (req, file, cb) => {
-    const isValid = !!MIME_TYPE_MAP[file.mimetype];
-    let error = isValid ? null : new Error('Invalid mime type!');
-    cb(error, isValid);
-  },
-});
+const deleteBucketFile = async (filename) => {
+  const params = {
+    Bucket: bucketName,
+    Key: filename,
+  };
+  try {
+    await s3.headObject(params).promise();
+    try {
+      await s3.deleteObject(params).promise();
+      console.log('file  ' + filename + ' deleted Successfully');
+    } catch (err) {
+      console.log(
+        'ERROR in file ' + filename + ' Deleting : ' + JSON.stringify(err)
+      );
+      throw new Error('ERROR in file Deleting');
+    }
+  } catch (err) {
+    console.log('File ' + filename + ' not Found ERROR : ' + err);
+    throw new Error('File not Found');
+  }
+};
 
-module.exports = fileUpload;
+exports.deleteBucketFile = deleteBucketFile;
