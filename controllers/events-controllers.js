@@ -1,4 +1,5 @@
 const { validationResult } = require('express-validator');
+const bucketManager = require('../middleware/s3');
 
 const HttpError = require('../models/http-error');
 const Events = require('../models/events');
@@ -157,7 +158,7 @@ const createEvent = async (req, res, next) => {
   let images = [];
   if (req.files) {
     req.files.map((file) => {
-      images.push(file.path);
+      images.push(file.location);
     });
   }
 
@@ -198,6 +199,7 @@ const createEvent = async (req, res, next) => {
 const updateEvent = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log(errors);
     return next(
       new HttpError('Invalid inputs passed, please check your data.', 422)
     );
@@ -217,6 +219,7 @@ const updateEvent = async (req, res, next) => {
     stadium_id,
     isImportant,
     active,
+    imagesName,
   } = req.body;
   const eventId = req.params.pid;
 
@@ -229,6 +232,27 @@ const updateEvent = async (req, res, next) => {
       500
     );
     return next(error);
+  }
+
+  const difference = event.images.filter((x) => !imagesName.includes(x));
+  for (let i = 0; i < difference.length; i++) {
+    const url = difference[i].split(
+      'https://upload-images-palcosplus.s3.amazonaws.com/'
+    );
+    await bucketManager.deleteBucketFile(url[1]);
+  }
+
+  let images = [];
+  if (req.files) {
+    let file = 0;
+    for (let i = 0; i < imagesName.length; i++) {
+      if (imagesName[i] === '') {
+        images.push(req.files[file].location);
+        file++;
+      } else {
+        images.push(imagesName[i]);
+      }
+    }
   }
 
   if (event) {
@@ -245,6 +269,7 @@ const updateEvent = async (req, res, next) => {
     event.stadium_id = stadium_id;
     event.isImportant = isImportant;
     event.active = active;
+    event.images = images;
     event.modified_date = Date.now();
   }
 
@@ -273,6 +298,13 @@ const deleteEvent = async (req, res, next) => {
       500
     );
     return next(error);
+  }
+
+  for (let i = 0; i < event.images.length; i++) {
+    const url = event.images[i].split(
+      'https://upload-images-palcosplus.s3.amazonaws.com/'
+    );
+    await bucketManager.deleteBucketFile(url[1]);
   }
 
   try {

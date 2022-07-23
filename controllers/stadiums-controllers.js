@@ -1,4 +1,5 @@
 const { validationResult } = require('express-validator');
+const bucketManager = require('../middleware/s3');
 
 const HttpError = require('../models/http-error');
 const Stadium = require('../models/stadium');
@@ -137,6 +138,25 @@ const updateStadium = async (req, res, next) => {
   } = req.body;
   const stadiumId = req.params.pid;
 
+  let stadium;
+  try {
+    stadium = await Stadium.findById(stadiumId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not update stadium.',
+      500
+    );
+    return next(error);
+  }
+
+  const difference = stadium.images.filter((x) => !imagesName.includes(x));
+  for (let i = 0; i < difference.length; i++) {
+    const url = difference[i].split(
+      'https://upload-images-palcosplus.s3.amazonaws.com/'
+    );
+    await bucketManager.deleteBucketFile(url[1]);
+  }
+
   let images = [];
   if (req.files) {
     let file = 0;
@@ -148,17 +168,6 @@ const updateStadium = async (req, res, next) => {
         images.push(imagesName[i]);
       }
     }
-  }
-
-  let stadium;
-  try {
-    stadium = await Stadium.findById(stadiumId);
-  } catch (err) {
-    const error = new HttpError(
-      'Something went wrong, could not update stadium.',
-      500
-    );
-    return next(error);
   }
 
   if (stadium) {
@@ -203,6 +212,13 @@ const deleteStadium = async (req, res, next) => {
       500
     );
     return next(error);
+  }
+
+  for (let i = 0; i < stadium.images.length; i++) {
+    const url = stadium.images[i].split(
+      'https://upload-images-palcosplus.s3.amazonaws.com/'
+    );
+    await bucketManager.deleteBucketFile(url[1]);
   }
 
   try {

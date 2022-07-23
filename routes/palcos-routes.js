@@ -9,6 +9,7 @@ const router = express.Router();
 router.get('/', palcosControllers.getAllPalcos);
 router.get('/:id', palcosControllers.getPalcoById);
 router.get('/stadium/:pid', palcosControllers.getPalcoByStadiumId);
+router.get('/active/stadium/:pid', palcosControllers.getActivePalcoByStadiumId);
 
 router.post(
   '/',

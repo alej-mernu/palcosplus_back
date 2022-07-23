@@ -1,4 +1,5 @@
 const { validationResult } = require('express-validator');
+const bucketManager = require('../middleware/s3');
 
 const HttpError = require('../models/http-error');
 const Team = require('../models/teams');
@@ -134,6 +135,25 @@ const updateTeam = async (req, res, next) => {
   } = req.body;
   const teamId = req.params.pid;
 
+  let team;
+  try {
+    team = await Team.findById(teamId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not update team.',
+      500
+    );
+    return next(error);
+  }
+
+  const difference = team.images.filter((x) => !imagesName.includes(x));
+  for (let i = 0; i < difference.length; i++) {
+    const url = difference[i].split(
+      'https://upload-images-palcosplus.s3.amazonaws.com/'
+    );
+    await bucketManager.deleteBucketFile(url[1]);
+  }
+
   let images = [];
   if (req.files) {
     let file = 0;
@@ -145,17 +165,6 @@ const updateTeam = async (req, res, next) => {
         images.push(imagesName[i]);
       }
     }
-  }
-
-  let team;
-  try {
-    team = await Team.findById(teamId);
-  } catch (err) {
-    const error = new HttpError(
-      'Something went wrong, could not update team.',
-      500
-    );
-    return next(error);
   }
 
   if (team) {
@@ -193,6 +202,13 @@ const deleteTeam = async (req, res, next) => {
       500
     );
     return next(error);
+  }
+
+  for (let i = 0; i < team.images.length; i++) {
+    const url = team.images[i].split(
+      'https://upload-images-palcosplus.s3.amazonaws.com/'
+    );
+    await bucketManager.deleteBucketFile(url[1]);
   }
 
   try {

@@ -24,7 +24,7 @@ router.post(
 
 router.patch(
   '/:pid',
-  [check('date').not().isEmpty(), check('stadium_id').not().isEmpty()],
+  fileUpload.array('images'),
   eventsControllers.updateEvent
 );
 
