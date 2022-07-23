@@ -1,4 +1,5 @@
 const { validationResult } = require('express-validator');
+const bucketManager = require('../middleware/s3');
 
 const HttpError = require('../models/http-error');
 const Palco = require('../models/palcos');
@@ -6,7 +7,7 @@ const Palco = require('../models/palcos');
 const getAllPalcos = async (req, res, next) => {
   let palcos;
   try {
-    palcos = await Palco.find();
+    palcos = await Palco.find().sort({ name: 1 });
   } catch (err) {
     const error = new HttpError(
       'Something went wrong, could not find the palcos.',
@@ -58,6 +59,31 @@ const getPalcoByStadiumId = async (req, res, next) => {
   let palcos;
   try {
     palcos = await Palco.find({ stadium_id: stadiumId });
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching palcos failed, please try again later',
+      500
+    );
+    return next(error);
+  }
+
+  if (!palcos || palcos.length === 0) {
+    return next(
+      new HttpError('Could not find palcos for the provided user id.', 404)
+    );
+  }
+
+  res.json({
+    palcos: palcos.map((palco) => palco.toObject({ getters: true })),
+  });
+};
+
+const getActivePalcoByStadiumId = async (req, res, next) => {
+  const stadiumId = req.params.pid;
+
+  let palcos;
+  try {
+    palcos = await Palco.find({ stadium_id: stadiumId, active: true });
   } catch (err) {
     const error = new HttpError(
       'Fetching palcos failed, please try again later',
@@ -169,6 +195,25 @@ const updatePalco = async (req, res, next) => {
   } = req.body;
   const palcoId = req.params.pid;
 
+  let palco;
+  try {
+    palco = await Palco.findById(palcoId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not update palco.',
+      500
+    );
+    return next(error);
+  }
+
+  const difference = palco.images.filter((x) => !imagesName.includes(x));
+  for (let i = 0; i < difference.length; i++) {
+    const url = difference[i].split(
+      'https://upload-images-palcosplus.s3.amazonaws.com/'
+    );
+    await bucketManager.deleteBucketFile(url[1]);
+  }
+
   let images = [];
   if (req.files) {
     let file = 0;
@@ -180,17 +225,6 @@ const updatePalco = async (req, res, next) => {
         images.push(imagesName[i]);
       }
     }
-  }
-
-  let palco;
-  try {
-    palco = await Palco.findById(palcoId);
-  } catch (err) {
-    const error = new HttpError(
-      'Something went wrong, could not update palco.',
-      500
-    );
-    return next(error);
   }
 
   if (palco) {
@@ -238,6 +272,13 @@ const deletePalco = async (req, res, next) => {
     return next(error);
   }
 
+  for (let i = 0; i < palco.images.length; i++) {
+    const url = palco.images[i].split(
+      'https://upload-images-palcosplus.s3.amazonaws.com/'
+    );
+    await bucketManager.deleteBucketFile(url[1]);
+  }
+
   try {
     await palco.remove();
   } catch (err) {
@@ -271,6 +312,7 @@ const deletePalcoByStadiumId = async (req, res, next) => {
 exports.getAllPalcos = getAllPalcos;
 exports.getPalcoById = getPalcoById;
 exports.getPalcoByStadiumId = getPalcoByStadiumId;
+exports.getActivePalcoByStadiumId = getActivePalcoByStadiumId;
 exports.createPalco = createPalco;
 exports.updatePalco = updatePalco;
 exports.deletePalco = deletePalco;
